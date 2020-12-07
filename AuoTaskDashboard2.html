@@ -1,0 +1,906 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>AutoTask Dashboard2</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <!--<meta http-equiv="Expires" content="120000" />-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0">
+    <!--<meta http-equiv="refresh" content="10"> 每隔10秒自动刷新-->
+
+    <script src="Common/layui/echarts/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="Common/layui/echarts/echarts.min.js"></script>
+    <style>
+                /*Chrome滚动条样式*/
+
+  ::-webkit-scrollbar {width:5px;height:5px;position:absolute}
+  ::-webkit-scrollbar-thumb {background-color:#5bc0de}
+  ::-webkit-scrollbar-track {background-color:#ddd}
+
+        /***/
+        a {
+            text-decoration: none;
+            color: #399bff;
+        }
+        a.active, a:focus {
+            outline: none !important;
+            text-decoration: none;
+        }
+            a:hover {
+                color: #06c;
+                text-decoration: none !important;
+            }
+        .body {
+            background: url(Images/bg3.jpg)  center top no-repeat;
+            background-size: cover;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .form1 {
+            width: 100%;
+            height: 100%;
+        }
+        /*fullscreen*/
+        #screenshow {
+            text-decoration: none;
+            color: #808080;
+            /*margin-right:1%;*/
+            margin-left: 98%;
+            background-image: url(Common//Images/fullscreen.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .select {
+            background-color: transparent;
+            color: #808080;
+            border-radius: 5px;
+        }
+
+        #select {
+            width: 180px;
+            margin-left: 40%;
+        }
+
+        #Container {
+            width: 60%;
+            height: 300px;
+            margin-left: 10%;
+            float: left;
+        }
+
+        #AssignTicketPercent {
+            width: 20%;
+            height: 300px;
+            margin-right: 10%;
+            float: right;
+        }
+
+        #AssignedType {
+            width: 40%;
+            height: 300px;
+            margin-left: 10%;
+            float: left;
+        }
+
+        #AssignedType2 {
+            width: 40%;
+            height: 300px;
+            margin-right: 10%;
+            float: right;
+        }
+
+        #AssignedBTYearly {
+            margin-top: 1%;
+            width: 80%;
+            height: 400px;
+            margin-left: 10%;
+            float: left;
+        }
+    </style>
+    <script type="text/javascript">
+    //进入全屏
+    function enterFullScreen() {
+        var de = document.documentElement;
+        if (de.requestFullscreen) {
+            de.requestFullscreen();
+        } else if (de.mozRequestFullScreen) {
+            de.mozRequestFullScreen();
+        } else if (de.webkitRequestFullScreen) {
+            de.webkitRequestFullScreen();
+        }
+    }
+    //退出全屏
+    function exitFullScreen() {
+        var de = document;
+        if (de.exitFullscreen) {
+            de.exitFullscreen();
+        } else if (de.mozCancelFullScreen) {
+            de.mozCancelFullScreen();
+        } else if (de.webkitCancelFullScreen) {
+            de.webkitCancelFullScreen();
+        }
+    }
+    </script>
+</head>
+<body class="body" oncontextmenu="return(false)">
+    <form id="form1" class="form1">
+        <div>
+            <h1 style="text-align:center;color:steelblue">AutoTask Dashboard2</h1>
+        </div>
+        <a id="screenshow" href="#" onclick="enterFullScreen(); exitFullScreen()"><span>[  ]</span></a>
+        <div>
+            <!--<select id="select" class="select">
+                <option value="Group by AssignedTo" selected="selected">Group by AssignedTo</option>
+                <option value="saab">Group by TaskType</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+            </select>-->
+            <div>
+                <div id="Container"></div>
+                <div id="AssignTicketPercent"></div>
+            </div>
+            <div>
+                <div id="AssignedType"></div>
+                <div id="AssignedType2"></div>
+            </div>
+            <div>
+                <div id="AssignedBTYearly"></div>
+            </div>
+        </div>
+    </form>
+    <!--注释外部Js调用产生的偶尔500错误
+        <script type="text/javascript" src="Common/AutoTicket/AutoTicketReport.js"></script>
+        -->
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById("Container"));
+        var date = new Date();
+        var today = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        //var charttype = $("#charttype")[0].value;
+        //显示标题，图例和空的坐标轴--定义空的图表
+        myChart.setOption({
+            //backgroundColor: "#192138", //背景颜色
+            textStyle: {
+                color: "#FF6347"  //#02F5F6全局字体颜色，不设置则每个扇形的字和扇形颜色一致
+            },
+            title: {
+                text: "AutoTicket--Total",
+                textStyle: { color: "#02F5F6" },
+                subtext: "Order By AssignedTo(" + today + ")",
+                x: "left" //设置该标记在x轴位置
+            },
+            tooltip: {
+                show: true,
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    saveAsImage: {
+                        type: 'png',
+                        title: '保存为图片',
+                        name: 'AutoTicket_Assignment_TodayTotal_' + today + '',
+                    },
+                    dataView: {
+                        show: true,
+                        title: "AutoTicket—数据视图",
+                        readOnly: false,
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'bar', 'stack', 'tiled'],
+                    },
+                },
+            },
+            grid: {
+                x: "4%",
+                y: "20%",
+                x2: "1%",
+                y2: "10%",
+                borderWidth: 1,
+            },
+            legend: {
+                textStyle: { color: "#02F5F6" },
+                data: ["Total"],
+                x: "center"
+            },
+            dataZoom: [//滑动条
+                {
+                    yAxisIndex: 0,//这里是从X轴的0刻度开始
+                    show: false,//是否显示滑动条，不影响使用
+                    type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+                    //startValue: 0, // 从头开始。
+                    //endValue: 9  // 一次性展示6个。
+                }
+            ],
+            calculable: true,
+            xAxis: [{
+                type: "category",
+                data: []
+            }],
+            yAxis: [{
+                type: "value"
+            }],
+            series: [{
+                name: "Total",
+                type: "line", //bar柱状图，line折线图，pie饼图，仪表盘 gauge， 散点图：scatter，涟漪特效散点图：effectScatter，雷达图：radar，树状图：tree，treemap，旭日图sunburst，箱形图boxplot，k线图 candlestick，热力图heatmap，地图map，平行坐标系parallel，线路图 lines，关系图graph，漏斗图 funnel
+                itemStyle: {
+                    normal: { //柱子颜色
+                        color: "#cc6633"
+                    },
+                },
+                label: { show: true, color: "#ffffff" },
+                barWidth: "40px",
+                smooth: true, //折线图转角变圆角
+                data: [],
+            }]
+        });
+        myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+        //ajax动态追加数据到 图表
+        var names0 = [];    //类别数组（实际用来放X轴坐标值）
+        var nums0 = [];    //销量数组（实际用来放Y坐标值）
+        var total0 = 0;
+        var TotalCountToday = 0;
+        $.ajax({
+            type: "get",
+            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketTodayByAssignedTo",    //请求发送到TestServlet处 http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketTodayByAssignedTo
+            data: {},
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                //console.log(result);
+
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+                if (result["Tables"]["0"]["Rows"].length > 0) {
+                    for (var i = 0; i < result["Tables"]["0"]["Rows"].length; i++) {
+                        names0.push(result["Tables"]["0"]["Rows"][i].AssignedTo);    //挨个取出分配的人员并填入分配数组
+                        nums0.push(result["Tables"]["0"]["Rows"][i].Count);    //挨个取出总数并填入总数数组
+                        TotalCountToday += parseInt(result["Tables"]["0"]["Rows"][i].Count);
+                    }
+                    //alert(total0);
+                    myChart.hideLoading();    //隐藏加载动画
+                    myChart.setOption({        //加载数据图表
+                        title: {
+                            subtext: "Order By AssignedTo(" + today + "),TotallyCount:" + TotalCountToday,
+                        },
+                        xAxis: {
+                            //name: "AssignedTo",  //x轴单位
+                            type: "category",
+                            data: names0
+                        },
+                        yAxis: {
+                            //name: "Total",  //y轴单位
+                        },
+                        series: [{
+                            // 根据名字对应到相应的系列
+                            type: "line",
+                            //name: "Total",
+                            data: nums0
+                        }]
+                    });
+
+                }
+                else {
+                    alert("未查询到数据");
+                    myChart.hideLoading();
+                }
+                //alert(result["Tables"]["0"]["Rows"]["0"].AssignedTo + "\n" + result["Tables"]["0"]["Rows"]["0"]["Count"]);
+            },
+            error: function (errorMsg) {
+                //请求失败时执行该函数
+                //alert("图表请求数据失败!");
+                myChart.hideLoading();
+            }
+        })
+
+        var MoveOUChart = echarts.init(document.getElementById("AssignTicketPercent"));
+        MoveOUChart.setOption({
+            title: {
+                text: '',
+                subtext: '',
+                x: 'center',
+                textStyle: { color: '#02F5F6' },
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a}<br/>{b}:{c}<br/>({d}%)'
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    saveAsImage: {
+                        type: 'png',
+                        title: '保存为图片',
+                        name: 'TicketAssigned_' + year + '',
+                    },
+                    dataView: {
+                        show: true,
+                        title: "TicketAssigned—数据视图",
+                        readOnly: false,
+                    },
+                },
+            },
+            grid: {
+                x: "4%",
+                y: "20%",
+                x2: "1%",
+                y2: "10%",
+                borderWidth: 1,
+            },
+            legend: {
+                textStyle: { color: '#028888' },
+                orient: 'vertical',
+                left: '70%',  //图例距离左的距离
+                top:'10%',//图例距离上方的距离
+                y: 'center',  //图例上下居中
+                data: ["Incident", "ServiceRequest", "BTCase"]
+            },
+            color: ['rgb(203,155,255)', 'rgb(149,162,255)', 'rgb(58,186,255)',
+                    'rgb(119,168,249)', 'rgb(235,161,159)'],//五个数据，五个颜色
+            series: [
+              {
+                  name: '',
+                  type: 'pie',
+                  radius: '70%',  //图的大小
+                  center: ['35%', '50%'], //图的位置，距离左跟上的位置
+                  data: [
+                    {
+                        name: "Incident",
+                        value: []
+                    },
+                    {
+                        name: "ServiceRequest",
+                        value: []
+                    },
+                    {
+                        name: "BTCase",
+                        value: []
+                    },
+                  ]
+              }
+            ]
+        });
+        MoveOUChart.showLoading();
+        var numsTicket = [];
+        var TicketTotalCount = 0;
+        var SumINC = [];
+        var SumSR = [];
+        var SumBT = [];
+        $.ajax({
+            type: "get",
+            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketYearly", 
+            data: {},
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                //console.log(result);
+                console.log(result);
+                //alert(result["Tables"]["0"]["Rows"]["0"].SumAll);
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+                TicketTotalCount = result["Tables"]["0"]["Rows"]["0"].SumAll;
+                    numsTicket.push(result["Tables"]["0"]["Rows"]["0"].SumAll);
+                    SumINC.push(result["Tables"]["1"]["Rows"]["0"].SumINC);
+                    SumSR.push(result["Tables"]["2"]["Rows"]["0"].SumSR);
+                    SumBT.push(result["Tables"]["3"]["Rows"]["0"].SumBT);
+                    MoveOUChart.hideLoading();    //隐藏加载动画
+                    MoveOUChart.setOption({        //加载数据图表
+                        title: {
+                            text: 'TicketAssigned(' + year + ')',
+                            subtext: 'Totally:' + TicketTotalCount,
+                            },
+                                series: [
+                            {
+                                name: '',
+                                type: 'pie',
+                                radius: '70%',  //图的大小
+                                center: ['45%', '60%'], //图的位置，距离左跟上的位置
+                                data: [
+                            {
+                                name: "Incident",
+                                value: SumINC
+                            },
+                            {
+                                name: "ServiceRequest",
+                                value: SumSR
+                            },
+                            {
+                                name: "BTCase",
+                                value: SumBT
+                            },
+                            ]
+                            }
+                            ]
+                            });
+
+               
+            },
+            error: function (errorMsg) {
+                //请求失败时执行该函数
+                //alert("图表请求数据失败!");
+                MoveOUChart.hideLoading();
+            }
+        })
+
+
+        var AssignedTypeChart = echarts.init(document.getElementById("AssignedType"));
+        AssignedTypeChart.setOption({
+            //backgroundColor: "#192138", //背景颜色
+            textStyle: {
+                color: "#FF6347"  //#02F5F6全局字体颜色，不设置则每个扇形的字和扇形颜色一致
+            },
+            title: {
+                text: "AutoTicket--INC",
+                textStyle: { color: "#02F5F6" },
+                subtext: "Order By AssignedTo(" + today + ")",
+                x: "left" //设置该标记在x轴位置
+            },
+            tooltip: {
+                show: true,
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    saveAsImage: {
+                        type: 'png',
+                        title: '保存为图片',
+                        name: 'AutoTicket_Assignment_Incident_' + today + '',
+                    },
+                    dataView: {
+                        show: true,
+                        title: "AutoTicket—数据视图",
+                        readOnly: false,
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'bar', 'stack', 'tiled'],
+                    },
+                },
+            },
+            grid: {
+                x: "4%",
+                y: "20%",
+                x2: "1%",
+                y2: "10%",
+                borderWidth: 1,
+            },
+            legend: {
+                textStyle: { color: "#02F5F6" },
+                data: ["Total"],
+                x: "center"
+            },
+            calculable: true,
+            xAxis: [{
+                type: "category",
+                data: []
+            }],
+            yAxis: [{
+                type: "value"
+            }],
+            series: [{
+                name: "Total",
+                type: "bar", //bar柱状图，line折线图，pie饼图，仪表盘 gauge， 散点图：scatter，涟漪特效散点图：effectScatter，雷达图：radar，树状图：tree，treemap，旭日图sunburst，箱形图boxplot，k线图 candlestick，热力图heatmap，地图map，平行坐标系parallel，线路图 lines，关系图graph，漏斗图 funnel
+                itemStyle: {
+                    normal: { //柱子颜色
+                        color: "#cc6633"
+                    },
+                },
+                label: { show: true, color: "#ffffff" },
+                barWidth: "40px",
+                data: [],
+            }]
+        });
+        AssignedTypeChart.showLoading();
+        var names1 = [];    //类别数组（实际用来放X轴坐标值）
+        var nums1 = [];
+        var TotalCountINC = 0;
+        $.ajax({
+            type: "get",
+            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketTodayByINC",    //请求发送到TestServlet处 http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketTodayByAssignedTo
+            data: {},
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                //console.log(result);
+
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+                if (result["Tables"]["0"]["Rows"].length > 0) {
+                    for (var i = 0; i < result["Tables"]["0"]["Rows"].length; i++) {
+                        names1.push(result["Tables"]["0"]["Rows"][i].AssignedTo);    //挨个取出分配的人员并填入分配数组
+                        nums1.push(result["Tables"]["0"]["Rows"][i].Count);    //挨个取出总数并填入总数数组
+                        TotalCountINC += parseInt(result["Tables"]["0"]["Rows"][i].Count);
+                    }
+                    AssignedTypeChart.hideLoading();    //隐藏加载动画
+                    AssignedTypeChart.setOption({        //加载数据图表
+                        title: {
+                            subtext: "Order By AssignedTo(" + today + "),TotallyCount:" + TotalCountINC,
+                        },
+                        xAxis: {
+                            //name: "AssignedTo",  //x轴单位
+                            type: "category",
+                            data: names1
+                        },
+                        yAxis: {
+                            //name: "Total",  //y轴单位
+                        },
+                        series: [{
+                            // 根据名字对应到相应的系列
+                            type: "bar",
+                            //name: "Total",
+                            data: nums1
+                        }]
+                    });
+
+                }
+                else {
+                    alert("未查询到数据");
+                    AssignedTypeChart.hideLoading();
+                }
+                //alert(result["Tables"]["0"]["Rows"]["0"].AssignedTo + "\n" + result["Tables"]["0"]["Rows"]["0"]["Count"]);
+            },
+            error: function (errorMsg) {
+                //请求失败时执行该函数
+                //alert("图表请求数据失败!");
+                AssignedTypeChart.hideLoading();
+            }
+        })
+
+
+        var AssignedTypeChart2 = echarts.init(document.getElementById("AssignedType2"));
+        AssignedTypeChart2.setOption({
+            //backgroundColor: "#192138", //背景颜色
+            textStyle: {
+                color: "#FF6347"  //#02F5F6全局字体颜色，不设置则每个扇形的字和扇形颜色一致
+            },
+            tooltip:{
+                show:true,
+            },
+            title: {
+                text: "AutoTicket--SR",
+                textStyle: { color: "#02F5F6" },
+                subtext: "Order By AssignedTo(" + today + ")",
+                x: "left" //设置该标记在x轴位置
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    saveAsImage: {
+                        type: 'png',
+                        title: '保存为图片',
+                        name: 'AutoTicket_Assignment_ServiceRequest_' + today + '',
+                    },
+                    dataView: {
+                        show: true,
+                        title: "AutoTicket—数据视图",
+                        readOnly: false,
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'bar', 'stack', 'tiled'],
+                    },
+                },
+            },
+            grid: {
+                x: "4%",
+                y: "20%",
+                x2: "1%",
+                y2: "10%",
+                borderWidth: 1,
+            },
+            legend: {
+                textStyle: { color: "#02F5F6" },
+                data: ["Total"],
+                x: "center"
+            },
+            calculable: true,
+            xAxis: [{
+                type: "category",
+                data: []
+            }],
+            yAxis: [{
+                type: "value"
+            }],
+            series: [{
+                name: "Total",
+                type: "bar", //bar柱状图，line折线图，pie饼图，仪表盘 gauge， 散点图：scatter，涟漪特效散点图：effectScatter，雷达图：radar，树状图：tree，treemap，旭日图sunburst，箱形图boxplot，k线图 candlestick，热力图heatmap，地图map，平行坐标系parallel，线路图 lines，关系图graph，漏斗图 funnel
+                itemStyle: {
+                    normal: { //柱子颜色
+                        color: "#cc6633"
+                    },
+                },
+                label: { show: true, color: "#ffffff" },
+                barWidth: "40px",
+                data: [],
+            }]
+        });
+        AssignedTypeChart2.showLoading();
+        var names2 = [];    //类别数组（实际用来放X轴坐标值）
+        var nums2 = [];
+        var TotalCountSR = 0;
+        $.ajax({
+            type: "get",
+            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketTodayBySR",    //请求发送到TestServlet处 http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketTodayByAssignedTo
+            data: {},
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                //console.log(result);
+
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+                if (result["Tables"]["0"]["Rows"].length > 0) {
+                    for (var i = 0; i < result["Tables"]["0"]["Rows"].length; i++) {
+                        names2.push(result["Tables"]["0"]["Rows"][i].AssignedTo);    //挨个取出分配的人员并填入分配数组
+                        nums2.push(result["Tables"]["0"]["Rows"][i].Count);    //挨个取出总数并填入总数数组
+                        TotalCountSR += parseInt(result["Tables"]["0"]["Rows"][i].Count);
+                    }
+                    AssignedTypeChart2.hideLoading();    //隐藏加载动画
+                    AssignedTypeChart2.setOption({        //加载数据图表
+                        title: {
+                            subtext: "Order By AssignedTo(" + today + "),TotallyCount:" + TotalCountSR,
+                        },
+                        xAxis: {
+                            //name: "AssignedTo",  //x轴单位
+                            type: "category",
+                            data: names2
+                        },
+                        yAxis: {
+                            //name: "Total",  //y轴单位
+                        },
+                        series: [{
+                            // 根据名字对应到相应的系列
+                            type: "bar",
+                            //name: "Total",
+                            data: nums2
+                        }]
+                    });
+
+                }
+                else {
+                    alert("未查询到数据");
+                    AssignedTypeChart2.hideLoading();
+                }
+                //alert(result["Tables"]["0"]["Rows"]["0"].AssignedTo + "\n" + result["Tables"]["0"]["Rows"]["0"]["Count"]);
+            },
+            error: function (errorMsg) {
+                //请求失败时执行该函数
+                //alert("图表请求数据失败!");
+                AssignedTypeChart2.hideLoading();
+            }
+        })
+
+        var year = date.getFullYear();
+        var AssignedYearly = echarts.init(document.getElementById("AssignedBTYearly"));
+        AssignedYearly.setOption({
+            textStyle: {
+                color: "#FF6347"  //#02F5F6全局字体颜色，不设置则每个扇形的字和扇形颜色一致
+            },
+            title: {
+                text: 'AutoTicket Assignment',
+                textStyle: { color: "#02F5F6" },
+                x: 'center'
+            },
+            tooltip: {
+               show:true,
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            grid: {
+                x: "3%",
+                y: "20%",
+                x2: "3%",
+                y2: "10%",
+                borderWidth: 1,
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    saveAsImage: {
+                        type: 'png',
+                        title: '保存为图片',
+                        name: 'AutoTicket_Assignment_YearlyView_' + year + '',
+                    },
+                    dataView: {
+                        show: true,
+                        title: "AutoTicket—数据视图",
+                        readOnly: false,
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'bar', 'stack', 'tiled'],
+                    },
+                },
+            },
+            legend: {
+                data: [type_Yearly],
+                top: 0,
+                selected: {
+                    type_Yearly: true,
+                    color: '#fff',
+                },
+                x: "left"
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: [],
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    axisLabel: {
+                        formatter: '{value} 月'
+                    },
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'Total',
+                    //min: 0,
+                    //max: 1500,
+                    //interval: 400,
+                    axisLabel: {
+                        formatter: '{value}'
+                    },
+                    nameLocation:'center',
+                    nameGap:65
+                },
+                {
+                    type: 'value',
+                    name: 'Month',
+                    // interval: 15000,
+                    axisLabel: {
+                        formatter: '{value}'
+                    },
+                    nameLocation: 'center',
+                    nameGap: 65,
+                    nameRotate: -90
+                }
+            ],
+            series: [
+            {
+                name: 'Total',
+                type: 'bar',
+                data: [],
+                barWidth: '40%',
+                //itemStyle: {
+                //    normal: { //柱子颜色
+                //        color: "#cc6633"
+                //    },
+                //},
+                label: { show: true, color: "#ffffff" },
+                itemStyle: {
+
+                    normal: {
+
+                        //好，这里就是重头戏了，定义一个list，然后根据所以取得不同的值，这样就实现了，
+
+                        color: function (params) {
+
+                            // build a color map as your need.
+
+                            var colorList = [
+
+                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+
+                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+
+                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+
+                            ];
+
+                            return colorList[params.dataIndex % colorList.length]
+
+                        },
+
+                        //以下为是否显示，显示位置和显示格式的设置了
+
+                        label: {
+
+                            show: true,
+
+                            position: 'top',
+
+                             formatter: '{c}'
+
+                            //formatter: '{a}\n{c}'
+
+                        }
+
+                    }
+
+                },
+            }
+            ]
+        });
+        AssignedYearly.showLoading();
+        var type_Yearly = [];    //类别数组（实际用来放X轴坐标值）
+        var names_moneth = [];
+        var nums_Yearly = [];
+        var TotalCount = 0;
+        $.ajax({
+            type: "post",
+            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketYearByAssignedTo",    //请求发送到TestServlet处 http://cnhuait61/AutoTask/AuoTicket.asmx/AssignedTicketTodayByAssignedTo
+            data: {},
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                //console.log(result);
+
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+                if (result["Tables"]["0"]["Rows"].length > 0) {
+                    for (var i = 0; i < result["Tables"]["0"]["Rows"].length; i++) {
+                        nums_Yearly.push(result["Tables"]["0"]["Rows"][i].Count);    //Total
+                        type_Yearly.push(result["Tables"]["0"]["Rows"][i].TaskType); //case类型
+                        names_moneth.push(result["Tables"]["0"]["Rows"][i].month_mm); //月份
+                        TotalCount += parseInt(result["Tables"]["0"]["Rows"][i].Count);
+                    }
+                    AssignedYearly.hideLoading();    //隐藏加载动画
+                    AssignedYearly.setOption({        //加载数据图表
+                        title: {
+                            subtext: 'Yearly view(' + year + '),TotallyCount:' + TotalCount,
+                        },
+                        xAxis: [{
+                            //name: "AssignedTo",  //x轴单位
+                            type: "category",
+                            data: names_moneth,
+                            axisLabel: {
+                                formatter: '{value} 月'
+                    },
+                        }, {
+                            //name: "AssignedTo",  //x轴单位
+                            type: "category",
+                            data: type_Yearly
+                        }],
+                        yAxis: [{
+                            //name: "Total",  //y轴单位
+                            data: type_Yearly
+                        }, {
+                            type: "category",
+                            data: names_moneth
+                        }],
+                        series: [{
+                            // 根据名字对应到相应的系列
+                            name: "Total",
+                            type: "bar",
+                            //name: "Total",
+                            data: nums_Yearly
+                        }, {
+                            // 根据名字对应到相应的系列
+                            name: "Month",
+                            type: "bar",
+                            //name: "Total",
+                            data: names_moneth
+                        }]
+                    });
+
+                }
+                else {
+                    alert("未查询到数据");
+                    AssignedYearly.hideLoading();
+                }
+                //alert(result["Tables"]["0"]["Rows"]["0"].AssignedTo + "\n" + result["Tables"]["0"]["Rows"]["0"]["Count"]);
+            },
+            error: function (errorMsg) {
+                //请求失败时执行该函数
+                //alert("图表请求数据失败!");
+                AssignedYearly.hideLoading();
+            }
+        })
+
+
+        // 下面两种可用于多个图表和单个图表的自适应大小
+        window.onresize = function () {
+            myChart.resize();
+            AssignedTypeChart.resize();
+            AssignedTypeChart2.resize();
+            AssignedYearly.resize();
+        }
+    </script>
+</body>
+</html>

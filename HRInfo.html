@@ -1,0 +1,396 @@
+﻿
+<!DOCTYPE html>
+
+<html lang="zh-cn">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>用户信息-HRAPI</title>
+    <script src="./Common/jquery.min.js"></script>
+
+    <style type="text/css">
+        .Content-Main {
+            max-width: 500px;
+            margin: auto;
+            border: none;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+            text-shadow: 1px 1px 1px #444;
+            color: #D3D3D3;
+            background: #555;
+        }
+
+            .Content-Main h1 {
+                padding: 8px 0px 40px 10px;
+                display: block;
+                border-bottom: 1px solid #444;
+            }
+
+        .text1 {
+            margin-left: 3px;
+        }
+
+        .Content-Main label {
+            margin: 0px 0px 5px;
+            display: block;
+        }
+
+        .fileInputContainer {
+            height: 99px;
+            width: 99px;
+            margin: 20px 20px 20px 20px;
+            border: none;
+            background: url("Common/Images/personal.jpg");
+            background-size: 99px 99px;
+            overflow: hidden;
+            position: center;
+        }
+
+        .fileInput {
+            height: 106px;
+            border: none;
+            font-size: 300px;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            cursor: pointer;
+            position: absolute;
+        }
+
+        .Content-Main label > span {
+            width: 20%;
+            float: left;
+            text-align: right;
+            padding-right: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .Main-sex {
+            padding-right: 13px;
+            padding-bottom: 13px;
+            font-weight: bold;
+            line-height: 4px;
+        }
+
+            .Main-sex input[type=checkbox] {
+                margin-top: 6px;
+                vertical-align: middle;
+            }
+
+        .Content-Main input[type="text"], .Content-Main input[type="email"], .Content-Main textarea {
+            height: 25px;
+            width: 70%;
+            line-height: 15px;
+            padding: 5px 0px 5px 5px;
+            margin-bottom: 16px;
+            margin-right: 6px;
+            margin-top: 2px;
+            border: none;
+            border-radius: 2px;
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            outline: 0 none;
+            background: #EBEBEB; /*#DFDFDF;*/
+            color: #525252;
+        }
+
+        .Content-Main textarea {
+            height: 100px;
+            width: 70%;
+            padding: 5px 0px 0px 5px;
+        }
+
+        .Content-Main .button {
+            padding: 8px 24px 8px 24px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 4px;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px #FFE477;
+            box-shadow: 1px 1px 1px #3D3D3D;
+            -moz-box-shadow: 1px 1px 1px #3D3D3D;
+            -webkit-box-shadow: 1px 1px 1px #3D3D3D;
+            color: #585858;
+            background: #f6ff0a;
+        }
+
+            .Content-Main .button:hover {
+                color: #333;
+                background-color: #EBEBEB;
+            }
+    </style>
+    <script type="text/javascript">
+            function AllInfo() {
+                //jQuery写法
+                //var user = $('#username').val();
+                //JavaScript原生写法
+                //var user = document.getElementById('iptInsertUser').value;
+                //var password = document.getElementById('iptInsertPassword').value;
+                $.ajax({
+                    type: "Get",  //post put get 等等
+                    async: false,//是否异步请求
+                    url: "http://cnhuam0appprd01/WebAPIHR/api/Employee/Info?SAPNo=1290656&Ntid=&EMail= ", //http://cnhuam0appprd01/WebAPIHR/api/Employee/GetWorkCells
+                    contentType: "application/x-www-form-urlencoded;charset=utf-8;",
+                    datatype: "Json",
+                    //data: {  //要传入ashx文件的数据
+                    //    "Info?": "SAPNo=1290656&Ntid=&EMail="
+                    //},
+                    success: function (data, textStatus) {
+                        //连接至ashx文件成功时，执行函数
+                        //data是从ashx文件返回来的信息，可以是字符串也可以是一个对象
+                        //如果data是字符串，则可以输出data的值
+                        //如果data是对象，则可以将这个对象的各属性值赋给其他变量
+                        //textStatus是表示状态的字符串，这里textStatus的值是"success"
+
+                        //console.log(typeof (data));
+                        console.log(textStatus + "\n" + data);
+                        //拿到数据后用eval函数处理
+                        //var outStr = eval("(" + data + ")");
+                        //var outstr = JSON.parse(data);
+                        var d = JSON.stringify(data); //将返回的object对象转换成json
+                        console.log(d);
+                        //console.log(outstr);
+                        var OneArLi = "";
+                        var newstr = d.split(',');
+                        for (var a = 0; a < newstr.Length; a++) {
+                            console.log(newstr[a].ToString() + "\n");
+                        }
+                        //if (textStatus == "200") {
+                            //for (var i = 0; i < d.length; i++) {
+                              
+                            //    OneArLi += "<li title=" + d[i]["ChineseName"] + ">" + d[i].ChineseName + "</li>";
+                            //}
+
+                            //$('#workcell').val(outstr["Workcell_Description"]);
+                            //$('#fullname1').text(outstr["username"] + " 的详情页:"); //对Label的赋值
+                            //$('#Workcell_ID').val(outstr["Workcell_ID"]);
+                            //$('#email').val(outstr["email"]);
+                            //$('#manager').val(outstr["manager"]);
+                            //$('#role').val(outstr["role"]);
+                            //$('#cost').val(outstr["cc"]);
+                            //$('#company').val(outstr["company"]);
+                            //$('#title').val(outstr["title"]);
+                            //$('#login').val(outstr["lastlogin"]);
+                            //$('#group').val(outstr["group"]);
+                            //$('#ip').val(outstr["ip"]);
+                            //$('#hostname').val(outstr["hostname"])
+                        //}
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                        //XMLHttpRequest在这个例子里没有用到
+                        //textStatus是表示状态的字符串，这里textStatus的值是"error"
+                        //errorThrown包含连接失败的信息，可以输出查看
+                        alert(textStatus + XMLHttpRequest + errorThrown);
+                    }
+                });
+        };
+
+            function SendSMS() {
+                //jQuery写法
+                //var user = $('#username').val();
+                //JavaScript原生写法
+                //var user = document.getElementById('iptInsertUser').value;
+                //var password = document.getElementById('iptInsertPassword').value;
+                $.ajax({
+                    type: "Post",  //post put get 等等
+                    async: false,//是否异步请求
+                    url: "http://cnhuam0appprd01/WebAPIHR/api/EmpCardPrint/SendMessage ", //http://cnhuam0appprd01/WebAPIHR/api/Employee/GetWorkCells
+                    contentType: "application/x-www-form-urlencoded;charset=utf-8;",
+                    datatype: "Json",
+                    data: {  //要传入ashx文件的数据
+                        "MobilePhoneNo": "15218814396",
+                        "Content": "test app",
+                    },
+                    success: function (data, textStatus) {
+                        //连接至ashx文件成功时，执行函数
+                        //data是从ashx文件返回来的信息，可以是字符串也可以是一个对象
+                        //如果data是字符串，则可以输出data的值
+                        //如果data是对象，则可以将这个对象的各属性值赋给其他变量
+                        //textStatus是表示状态的字符串，这里textStatus的值是"success"
+
+                        //console.log(typeof (data));
+                        console.log(textStatus + "\n" + data);
+                        //拿到数据后用eval函数处理
+                        //var outStr = eval("(" + data + ")");
+                        //var outstr = JSON.parse(data);
+                        var d = JSON.stringify(data); //将返回的object对象转换成json
+                        console.log(d);
+                        //console.log(outstr);
+                        var OneArLi = "";
+                        var newstr = d.split(',');
+                        for (var a = 0; a < newstr.Length; a++) {
+                            console.log(newstr[a].ToString() + "\n");
+                        }
+                        //if (textStatus == "200") {
+                        //for (var i = 0; i < d.length; i++) {
+
+                        //    OneArLi += "<li title=" + d[i]["ChineseName"] + ">" + d[i].ChineseName + "</li>";
+                        //}
+
+                        //$('#workcell').val(outstr["Workcell_Description"]);
+                        //$('#fullname1').text(outstr["username"] + " 的详情页:"); //对Label的赋值
+                        //$('#Workcell_ID').val(outstr["Workcell_ID"]);
+                        //$('#email').val(outstr["email"]);
+                        //$('#manager').val(outstr["manager"]);
+                        //$('#role').val(outstr["role"]);
+                        //$('#cost').val(outstr["cc"]);
+                        //$('#company').val(outstr["company"]);
+                        //$('#title').val(outstr["title"]);
+                        //$('#login').val(outstr["lastlogin"]);
+                        //$('#group').val(outstr["group"]);
+                        //$('#ip').val(outstr["ip"]);
+                        //$('#hostname').val(outstr["hostname"])
+                        //}
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                        //XMLHttpRequest在这个例子里没有用到
+                        //textStatus是表示状态的字符串，这里textStatus的值是"error"
+                        //errorThrown包含连接失败的信息，可以输出查看
+                        alert(textStatus + XMLHttpRequest + errorThrown);
+                    }
+                });
+            };
+
+        $(window).load(function () {
+            //AllInfo()
+            SendSMS();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="Content-Main">
+        <form action="" method="post" class="form-userInfo">
+            <h1 style="text-align:center">个人信息</h1>
+            <label id="fullname1"></label>
+            <!--<div class="fileInputContainer">
+
+                <input class="fileInput" id="" type="file" name="">
+
+            </div>-->
+
+            <label>
+
+                <span>NTID :</span>
+
+                <input type="text" id="userid" readonly="readonly" placeholder="NTID">
+
+            </label>
+
+            <label>
+
+                <span>Name:</span>
+
+                <input type="text" name="name" id="fullname2" readonly="readonly" placeholder="Full Name">
+
+            </label>
+
+            <label>
+
+                <span>Email :</span>
+
+                <input type="email" name="email" id="email" readonly="readonly" placeholder="@Jabil.com">
+
+            </label>
+
+            <label>
+
+                <span>Manager :</span>
+
+                <input type="text" id="manager" readonly="readonly" placeholder="Manager">
+
+            </label>
+
+            <label class="Main-sex">
+
+                <span>sex:</span>
+
+                <input type="checkbox" class="man">男
+
+                <input type="checkbox" class="women">女
+
+            </label>
+
+            <label>
+
+                <span>Roles :</span>
+
+                <input type="text" name="role" id="role" readonly="readonly" placeholder="Roles">
+
+            </label>
+
+            <label>
+
+                <span>Cost Center :</span>
+
+                <input type="text" id="cost" readonly="readonly" placeholder="Cost Center">
+
+            </label>
+
+            <label>
+
+                <span>Location :</span>
+
+                <input type="text" id="company" readonly="readonly" placeholder="Location">
+
+            </label>
+
+            <label>
+
+                <span>Title :</span>
+
+                <input type="text" id="title" readonly="readonly" placeholder="Title">
+
+            </label>
+
+            <label>
+
+                <span>Last Login :</span>
+
+                <input type="text" id="login" readonly="readonly" placeholder="Last Login">
+
+            </label>
+
+            <label>
+
+                <span>IPV4 Address:</span>
+
+                <input type="text" id="ip" readonly="readonly" placeholder="IPV4 Address">
+
+            </label>
+
+            <label>
+
+                <span>Device Name:</span>
+
+                <input type="text" id="hostname" readonly="readonly" placeholder="Device">
+
+            </label>
+
+            <label>
+
+                <span>Groups:</span>
+
+                <textarea id="group" readonly="readonly" placeholder="Group"></textarea>
+
+            </label>
+
+            <!--<label>
+
+                <input type="button" class="button" value="提交">
+
+            </label>-->
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

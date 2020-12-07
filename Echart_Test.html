@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./Common/layui/echarts/lib/esl.js"></script>
+    <script src="./Common/layui/echarts/lib/config.js"></script>
+    <script src="./Common/layui/echarts/lib/jquery.min.js"></script>
+    <script src="./Common/layui/echarts/lib/facePrint.js"></script>
+    <script src="./Common/layui/echarts/lib/testHelper.js"></script>
+    <script src="./Common/layui/echarts/lib/draggable.js"></script>
+    <link rel="stylesheet" href="./Common/layui/echarts/lib/reset.css">
+    <script data-require-id="echarts" src="./Common/layui/echarts/dist/echarts.js" async=""></script>
+</head>
+<body>
+    <style>
+        h1 {
+            line-height: 60px;
+            height: 60px;
+            background: #146402;
+            text-align: center;
+            font-weight: bold;
+            color: #eee;
+            font-size: 14px;
+        }
+
+        .chart {
+            height: 300px;
+        }
+    </style>
+    <div class="chart" id="plain"></div>
+    <h1>No scroll, width 300, right: 10</h1>
+    <div class="chart" id="plain2"></div>
+    <h1>No scroll, has '\n' after 'line3', bottom: 20</h1>
+    <div class="chart" id="plain3"></div>
+    <h1>No scroll, vertical, has '\n' after 'line3', right 20</h1>
+    <div class="chart" id="plain-v"></div>
+    <h1>No scroll, vertical, top 'middle', left: 20, heigth: 150</h1>
+    <div class="chart" id="plain-v2"></div>
+    <h1>Scroll</h1>
+    <div class="chart" id="scroll"></div>
+    <h1>Scroll auto: try to change window size (width: 80%, right: 30)</h1>
+    <div class="chart" id="scroll-auto"></div>
+    <h1>Scroll auto: left: 30, right: 30, bottom: 0, position: 'start'</h1>
+    <div class="chart" id="scroll-lr"></div>
+    <h1>Scroll vertically</h1>
+    <div class="chart" id="scroll-v"></div>
+    <h1>Scroll vertically, left: 10, top: 'center', position: 'start', height: 50% (Turn the second page and resize it until page button disappear)</h1>
+    <div class="chart" id="scroll-v2"></div>
+    <div id="legendHoverLink"></div>
+    <div id="multi-pie"></div>
+    <div id="icon-circle"></div>
+    <div id="only-single-item"></div>
+    <div id="vary-size"></div>
+    <div id="index-to-no-name"></div>
+
+    <script type="text/javascript">
+
+        var chart;
+        var myChart;
+        var option;
+
+        require([
+            'echarts'/*, 'map/js/china' */
+        ], function (echarts) {
+            var data = [];
+            for (var i = 0; i < 30; i++) {
+                data.push({ name: i + '', value: Math.random() });
+            }
+
+            var option = {
+                tooltip: {
+                },
+                legend: {
+                    type: 'scroll',
+                    selector: true,
+                    top: 10,
+                    left: 0,
+                    data: echarts.util.map(data, function (item) {
+                        return {
+                            name: item.name,
+                            icon: 'circle'
+                        };
+                    })
+                },
+                series: [{
+                    type: 'pie',
+                    data: data
+                }]
+            };
+
+            testHelper.create(echarts, 'icon-circle', {
+                title: 'The first icon should not be overflow',
+                option: option
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
+

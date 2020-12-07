@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="./Common/jquery.min.js"></script>
+    <script type="text/javascript">
+        function getuserbycard() {
+            $.ajax({
+                type: "Get",
+                url: "http://cnhuam0appprd01/WebAPIHR/api/Employee/GetEmployeeInfoByCardNo?CardNo=0004057177",
+                success: function (data, status) {
+                    if (status == "success") {
+                        //$("#div_test").html(data);
+                        console.log("卡号返回用户信息：");
+                        console.log("返回:" + data["ErrorMsg"]);
+                        console.log("NTID:" + data["Records"]["0"]["NTID"]);
+                        console.log("旧工号:" + data["Records"]["0"]["OldNo"]);
+                        console.log("SAP工号:" + data["Records"]["0"]["EmployeeId"]);
+                        console.log("Workday工号:" + data["Records"]["0"]["WDID"]);
+                        console.log("中文名:" + data["Records"]["0"]["ChineseName"]);
+                        console.log("英文名:" + data["Records"]["0"]["EnglishName"]);
+                        console.log("状态:" + data["Records"]["0"]["EmploymentStatus"]);
+                        console.log("邮箱:" + data["Records"]["0"]["Mail"]);
+                        console.log("部门:" + data["Records"]["0"]["WorkcellDescription"]);
+                        console.log("成本中心:" + data["Records"]["0"]["CostCenter"]);
+                        console.log("手机:" + data["Records"]["0"]["Mobile"]);
+                        console.log("===========================================");
+                        //$('#txt').val(data["Records"]["0"]["ChineseName"]);
+                        //console.log(data["Records"]["0"]["ChineseName"]);
+                        //alert(data["ErrorMsg"]);
+                    }
+                },
+                error: function (e) {
+                    //$("#div_test").html("Error");
+                    alert(data["ErrorMsg"]);
+                    //alert(data);
+                },
+                complete: function () {
+
+                }
+            });
+        };
+        function getaprrover() {
+            $.ajax({
+                type: "Get",
+                url: "http://cnhuam0appprd01/WebAPIHR/api/Employee/GetSupervisorInfo?SAPNo=01290656",
+                //http://cnhuam0appprd01/WebAPIHR/api/Employee/GetEmployeeInfo?SAPNo=01290656&Ntid=&EMail=
+                success: function (data, status) {
+                    if (status == "success") {
+                        //$("#div_test").html(data);
+                        console.log("SAP工号返回用户上级信息：");
+                        console.log("返回:" + data["ErrorMsg"]);
+                        console.log("NTID:" + data["Records"]["0"]["NTID"]);
+                        console.log("旧工号:" + data["Records"]["0"]["OldNo"]);
+                        console.log("Workday工号:" + data["Records"]["0"]["WDID"]);
+                        console.log("SAP工号:" + data["Records"]["0"]["EmployeeId"]);
+                        console.log("状态:" + data["Records"]["0"]["EmploymentStatus"]);
+                        console.log("中文名:" + data["Records"]["0"]["ChineseName"]);
+                        console.log("英文名:" + data["Records"]["0"]["EnglishName"]);
+                        console.log("邮箱:" + data["Records"]["0"]["Mail"]);
+                        console.log("部门:" + data["Records"]["0"]["WorkcellDescription"]);
+                        console.log("成本中心:" + data["Records"]["0"]["CostCenter"]);
+                        console.log("手机:" + data["Records"]["0"]["Mobile"]);
+                        console.log("===========================================");
+
+                        //console.log(data["Records"]["0"]["ChineseName"]);
+                        //alert(data["ErrorMsg"]);
+                    }
+                },
+                error: function (e) {
+                    //$("#div_test").html("Error");
+                    //alert(data["ErrorMsg"]);
+                    //alert(data);
+                },
+                complete: function () {
+
+                }
+            });
+        };
+        function getuser() {
+            $.ajax({
+                type: "Get",
+                url: "http://cnhuam0appprd01/WebAPIHR/api/Employee/GetEmployeeInfo?SAPNo=&Ntid=1290656&EMail=",
+                //http://cnhuam0appprd01/WebAPIHR/api/Employee/GetSupervisorInfo?SAPNo=01290656
+                success: function (data, status) {
+                    if (status == "success") {
+                        //$("#div_test").html(data);
+                        console.log("返回用户信息：");
+                        console.log("返回:" + data["ErrorMsg"]);
+                        console.log("NTID:" + data["Records"]["0"]["NTID"]);
+                        console.log("旧工号:" + data["Records"]["0"]["OldNo"]);
+                        console.log("Workday工号:" + data["Records"]["0"]["WDID"]);
+                        console.log("SAP工号:" + data["Records"]["0"]["EmployeeId"]);
+                        console.log("状态:" + data["Records"]["0"]["EmploymentStatus"]);
+                        console.log("中文名:" + data["Records"]["0"]["ChineseName"]);
+                        console.log("英文名:" + data["Records"]["0"]["EnglishName"]);
+                        console.log("邮箱:" + data["Records"]["0"]["Mail"]);
+                        console.log("部门:" + data["Records"]["0"]["WorkcellDescription"]);
+                        console.log("成本中心:" + data["Records"]["0"]["CostCenter"]);
+                        console.log("手机:" + data["Records"]["0"]["Mobile"]);
+                        console.log("===========================================");
+                        $('#txt').val(data["Records"]["0"]["ChineseName"] + "的信息--详细内容参见console区输出");
+                        //console.log(data["Records"]["0"]["ChineseName"]);
+                        alert(data["ErrorMsg"]);
+                    }
+                },
+                error: function (e) {
+                    //$("#div_test").html("Error");
+                    alert(data["ErrorMsg"]);
+                    //alert(data);
+                },
+                complete: function () {
+
+                }
+            });
+        };
+        $(window).load(function () {
+            getuserbycard();
+            getaprrover();
+            getuser();
+        });
+
+    </script>
+</head>
+<body>
+        <input id="txt" value=""/>
+</body>
+</html>

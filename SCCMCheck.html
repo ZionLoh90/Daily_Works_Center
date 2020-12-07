@@ -1,0 +1,359 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>JABIL黄埔IT在线查询接口</title>
+	<meta charset="utf-8" />
+    <link href="Common/button.css" rel="stylesheet" />
+    <script src="Common/jquery.min.js"></script>
+    <style>
+        .form {
+            width: 98%;
+            height: 100%;
+            margin-left: 1%;
+            margin-right: 1%;
+            margin-top: 10px;            
+        }
+
+        .title {
+            text-align: center;
+            font-style: italic;
+        }
+
+        .notice {
+            text-align: center;
+            color: red;
+        }
+
+        .select {
+            margin-left:41%;
+            font-size: 12pt;
+            text-align: center;
+            width: 180px;
+            height: 30px;
+            text-align: center;
+        }
+
+        .input {
+            font-size: 12pt;
+            width: 200px;
+            height: 30px;
+            text-align: center;
+        }
+
+        #content_center {
+            height: 50px;
+            /*margin-left: 10%;*/
+            /*margin-right: 20%;*/
+        }
+
+        #content_bottom {
+            margin-top: 10px;
+            width: 100%;
+            /*height: 480px;*/
+        }
+
+        .mytable {
+            margin-top: 10px;
+            width: 100%;
+            table-layout: auto;
+            padding: 0;
+            margin: 0;
+        }
+
+        caption {
+            padding: 0 0 5px 0;
+            width: 100%;
+            font: italic 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            text-align: right;
+        }
+
+        th {
+            font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            color: #637a85; /*#4f6b72;*/
+            border-right: 1px solid #C1DAD7;
+            border-bottom: 1px solid #C1DAD7;
+            border-top: 1px solid #C1DAD7;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 6px 6px 6px 12px;
+            background: #CCE8EA; /*#CAE8EA no-repeat;*/
+            font-size: 14px;
+        }
+
+            th.nobg {
+                border-top: 0;
+                border-left: 0;
+                border-right: 1px solid #C1DAD7;
+                background: none;
+            }
+
+        td {
+            border-right: 1px solid #C1DAD7;
+            border-bottom: 1px solid #C1DAD7;
+            background: #fff;
+            font-size: 12px;
+            padding: 6px 6px 6px 12px;
+            color: #4f6b72;
+        }
+
+
+            td.alt {
+                background: #F5FAFA;
+                color: #797268;
+            }
+
+        th.spec {
+            border-left: 1px solid #C1DAD7;
+            border-top: 0;
+            background: #fff no-repeat;
+            font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        }
+
+        th.specalt {
+            border-left: 1px solid #C1DAD7;
+            border-top: 0;
+            background: #f5fafa no-repeat;
+            font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            color: #797268;
+        }
+        </style>
+    <script lang="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $('#select').change(function () {
+                var selectedIndex = $(this).get(0).selectedIndex;
+                if (selectedIndex == 0) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入NTID"); }
+                if (selectedIndex == 1) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入NTID"); }
+                if (selectedIndex == 2) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入电脑名"); }
+                if (selectedIndex == 3) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入完整AD组名"); }
+                if (selectedIndex == 4) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入电脑名(在线)"); }
+                if (selectedIndex == 5) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入电脑名(在线)"); }
+                $('#searchtxt').focus();
+            });
+            $('#searchtxt').on('keypress', function (e) {
+                if (event.keyCode == 13) {
+                    event.cancelBubble = true;
+                    event.returnValue = false;
+                    $(this).parents("div").find("#searchbtn").click();
+                }
+            });
+        });
+    </script>
+</head > 
+    <body > 
+        <form id="form1" class="form">
+            <div id="content_top">
+                <h1 class="title">JABIL黄埔IT在线查询接口</h1>
+            </div>
+            <hr />
+            <div id="content_center">
+                <select id="select" class="select red mini">
+                    <option value="UserBaseInfoByNTID" selected="selected">用户基础信息查询</option>
+                    <option value="UserAdvanceInfoByNTID">用户高级信息查询</option>
+                    <option value="SMS">SMS Center</option>
+                    <option value="Leader">AD组内成员查询</option>
+                    <option value="SystemGroup">在线主机管理员组查询</option>
+                    <option value="LogonUser">在线主机登录用户查询</option>
+                </select>
+                <input id="searchtxt" class="input" name="searchtxt" placeholder="请输入NTID" />
+                <input id="searchbtn" name="searchtxt" type="button" class="btn-gradient red mini" value="查询" />
+            </div>
+            <div id="content_bottom">
+                <!--<table id="table1" class="mytable">
+                    <tr>
+                        <th>查询参数</th>
+                        <th>NTID</th>
+                        <th>SAP工号</th>
+                        <th>旧工号</th>
+                        <th>Workday工号</th>
+                        <th>中文名</th>
+                        <th>英文名</th>
+                        <th>在职状态</th>
+                        <th>邮箱</th>
+                        <th>部门</th>
+                        <th>成本中心</th>
+                        <th>电话</th>
+                    </tr>
+                </table>-->
+                <progress value="0" id="pg" hidden="hidden"></progress>
+                <table id="table1" class="mytable">
+
+                </table>
+            </div>
+        </form>
+            <script lang="javascript" type="text/javascript">
+            var click = document.getElementById("searchbtn");
+            click.onclick = function () {
+                var temp = document.getElementById("searchtxt").value;
+                //var input = temp.replace(/(^\s*)|(\s*$)/g, '');//去除空格;
+                if (temp == "" || temp == undefined || temp == null) {
+                    alert("请输入查询条件！");
+                    $("#searchtxt").focus();
+                    return;
+                }
+                var tabl = document.getElementById("table1");
+                var child = tabl.getElementsByTagName("tr");
+                if (child != "" || child != undefined) {
+                    var pObjs = tabl.childNodes;
+                    for (var i = pObjs.length - 1; i >= 0; i--) {
+                        // 一定要倒序，正序是删不干净的，可自行尝试
+                        tabl.removeChild(pObjs[i]);
+                    }
+                    //tabl.parentNode.removeChild(child);
+                    //移除table所有子元素
+                }
+                var selectedIndex = document.getElementById("select").selectedIndex;
+                switch (selectedIndex) {
+                    //根据下拉框选择执行对应的接口
+                    case 0:
+                        GetBaseUserInfo(temp);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        SccmCheck(temp);
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+
+                }
+                document.getElementById("searchtxt").value = "";
+            }
+
+                //用户基础信息接口
+            function GetBaseUserInfo(temp) {
+                var pgel = document.getElementById("pg");
+                var tab = document.getElementById("td");
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/GetADUser",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "NTID": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理    
+                        document.getElementById("searchbtn").setAttribute("disable", "true");
+                        for(a=0;a<=100;a++){
+                            if (tab == null || tab == undefined) {
+                                pgel.hidden = false;
+                                pgel.setAttribute("max", 100);
+                                setInterval(function (e) {
+
+                                    if (pgel.value != 100) pgel.value++;
+
+                                        //else pgel.value=0;
+                                    else pgel.hidden = true;
+                                }, 1000);
+                            }
+
+                        }
+                        
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        //console.log(data.Results["0"]);
+                        //var tempstr = "UserName:" + data.Results["0"]["UserName"] + "\nEmail:" + data.Results["0"]["Email"] + "\nTitle:" + data.Results["0"]["Title"] + "\nLeader:" + data.Results["0"]["Manager"] + "\nCostCenter:" + data.Results["0"]["CostCenter"] + "\nCompany:" + data.Results["0"]["Company"];
+                        //alert(tempstr);
+                        
+                        var tablestr1 = "<tr><th>Parameter</th><th>UserName</th><th>Email</th><th>Title</th><th>Leader</th><th>CostCenter</th><th>Company</th></tr>";
+                        var par = $('#select option:selected').text() + ">>>" + temp;
+                        var tablestr2 = "<tr><td>" + par + "</td><td>" + data.Results["0"]["UserName"] + "</td><td>" + data.Results["0"]["Email"] + "</td><td>" + data.Results["0"]["Title"] + "</td><td>" + data.Results["0"]["Manager"] + "</td><td>" + data.Results["0"]["CostCenter"] + "</td><td>" + data.Results["0"]["Company"] + "</td></tr>";
+                        $("#table1").append(tablestr1 + tablestr2);
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.value = 100;
+                        pgel.hidden = true;
+                        document.getElementById("searchbtn").setAttribute("disable", "false");
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        console.log(e);
+                        //document.getElementById("multipleResults").innerHTML = e;
+                    }
+                });
+            }
+
+
+            function SccmCheck(temp) {
+                var pgel = document.getElementById("pg");
+                var tab = document.getElementById("td");
+                //SCCM健康检查接口
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/SCCMCheck",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "HostName": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理
+                        document.getElementById("searchbtn").setAttribute("disable", "true");
+                        for (a = 0; a <= 100; a++) {
+                            if (tab == null || tab == undefined) {
+                                pgel.hidden = false;
+                                pgel.setAttribute("max", 100);
+                                setInterval(function (e) {
+
+                                    if (pgel.value != 100) pgel.value++;
+
+                                        //else pgel.value=0;
+                                    else pgel.hidden = true;
+                                }, 1000);
+                            }
+                        }
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        //var temp = "HostName:" + data.Results["Name"] + "\nIP:" + data.Results["IPAddresses"] + "\nMAC:" + data.Results["MACAddresses"] + "\nLastLogonUser:" + data.Results["LastLogonUserName"]
+                        //    + "\nOS:" + data.Results["OperatingSystemNameandVersion"] + "[Ver:" + data.Results["BuildExt"] + "]\nInstalledOn:" + data.Results["CreationDate"] + "\nIsAssignedToUser:" + data.Results["IsAssignedToUser"] + "\nSite:" + data.Results["ADSiteName"]
+                        //    + "\nSystemGroup:" + data.Results["SystemGroupName"] + "\nOU:" + data.Results["DistinguishedName"] + "\nPFE_LastDate:" + data.Results["PFE_LastDate"] + "\nHealthStatus:"
+                        //    + "(SCCMVer:" + data.Results["ClientVersion"] + ",BTTS:" + data.Results["PFE_BITSStatus"] + ",CCM:" + data.Results["PFE_CCMStatus"] + ",DCOM:" + data.Results["PFE_DCOM"] + ",DCOMProtocols:" + data.Results["PFE_DCOMProtocols"] + ",LanternAppCI:" + data.Results["PFE_LanternAppCI"]
+                        //    + ",PolicyPlatformLA:" + data.Results["PFE_PolicyPlatformLAStatus"] + ",PolicyPlatformProcessor:" + data.Results["PFE_PolicyPlatformProcessorStatus"] + ",StaleLogs:" + data.Results["PFE_StaleLogs"] + ",WMIReadRepositor:" + data.Results["PFE_WMIReadRepositor"]
+                        //    + ",WMIStatus:" + data.Results["PFE_WMIStatus"] + ",WMIWriteRepository:" + data.Results["PFE_WMIWriteRepository"] + ",WUAStatus:" + data.Results["PFE_WUAStatus"] + ")" + "\nRebootPending:" + data.Results["PFE_RebootPending"];
+                        //console.log(temp);
+                        var tablestr1 = "<tr><th>Parameter</th><th>HostName</th><th>IP</th><th>MAC</th><th>LastLogon</th><th>OS</th><th>InstalledOn</th><th>AssignedUser</th><th>Site</th><th>SystGroup</th><th>OU</th><th>HealthStatus</th><th>RebootPending</th></tr>";
+                        var par = $('#select option:selected').text() + ":" + temp.toUpperCase();
+                        var tablestr2 = "<tr><td>" + par + "</td><td>" + data.Results["Name"].toUpperCase() + "</td><td>" + data.Results["IPAddresses"] + "</td><td>" + data.Results["MACAddresses"] + "</td><td>" + data.Results["LastLogonUserName"]
+                            + "</td><td>" + data.Results["OperatingSystemNameandVersion"]+"\nVer:" + data.Results["BuildExt"] + "</td><td>" + data.Results["CreationDate"] 
+                            + "</td><td>" + data.Results["IsAssignedToUser"] + "</td><td>" + data.Results["ADSiteName"] + "</td><td>" + data.Results["SystemGroupName"] + "</td><td>" + data.Results["DistinguishedName"]
+                            + "</td><td>" + "PFELastDate:" + data.Results["PFE_LastDate"] + "\nCCMVer:" + data.Results["ClientVersion"] + "\nCCMStatus:" + data.Results["PFE_CCMStatus"] + "\nBTTS:" + data.Results["PFE_BITSStatus"] + "\nDCOM:" + data.Results["PFE_DCOM"] + "\nDCOMProtocols:" + data.Results["PFE_DCOMProtocols"] + "\nLanternAppCI:" + data.Results["PFE_LanternAppCI"]
+                            + "\nPolicyPlatformLA:" + data.Results["PFE_PolicyPlatformLAStatus"] + "\nPolicyPlatformProcessor:" + data.Results["PFE_PolicyPlatformProcessorStatus"] + "\nStaleLogs:" + data.Results["PFE_StaleLogs"] + "\nWMIReadRepositor:" + data.Results["PFE_WMIReadRepositor"]
+                            + "\nWMIStatus:" + data.Results["PFE_WMIStatus"] + "\nWMIWriteRepository:" + data.Results["PFE_WMIWriteRepository"] + "\nWUAStatus:" + data.Results["PFE_WUAStatus"] 
+                            + "</td><td>" + data.Results["PFE_RebootPending"] + "</td></tr>";
+                        $("#table1").append(tablestr1 + tablestr2.replace(/,/g, "\n").replace(/.000000+/g, "").replace(/ /g, ""));
+                        document.body.innerHTML = document.body.innerHTML.replace(/Health/ig, "<span style='color: green;font-weight:bold;font-style:italic'>$&</span>");//将指定文字标记为绿色
+                        document.body.innerHTML = document.body.innerHTML.replace(/REBOOTPENDING/ig, "<span style='color: red;'>$&</span>");//将指定文字标记为绿色
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.value = 100;
+                        pgel.hidden = true;
+                        document.getElementById("searchbtn").setAttribute("disable", "false");
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        console.log(e);
+                        //document.getElementById("multipleResults").innerHTML = e;
+                    }
+                });
+
+            }
+
+
+            onload = function () {
+                $("#searchtxt").focus();
+            }
+            </script>
+        
+    </body>
+
+</html>
+        
