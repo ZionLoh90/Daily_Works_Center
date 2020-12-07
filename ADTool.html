@@ -1,0 +1,709 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>JABIL黄埔AD在线查询接口</title>
+	<meta charset="utf-8" />
+    <link href="Common/button.css" rel="stylesheet" />
+    <link href="Common/layui/css/layui.css" rel="stylesheet" />
+    <script src="Common/jquery.min.js"></script>
+    <style>
+        .form {
+            width: 98%;
+            height: 100%;
+            margin-left: 1%;
+            margin-right: 1%;
+            margin-top: 10px;            
+        }
+
+        .title {
+            text-align: center;
+            font-style: italic;
+        }
+
+        .notice {
+            text-align: center;
+            color: red;
+        }
+
+        .select {
+            /*margin-left:41%;*/
+            font-size: 12pt;
+            text-align: center;
+            width: 180px;
+            height: 30px;
+        }
+
+        .input {
+            font-size: 12pt;
+            width: 200px;
+            height: 30px;
+            text-align: center;
+        }
+
+        #content_center {
+            height: 60px;
+            margin-left: 32%;
+            /*margin-right: 20%;*/
+        }
+
+        #content_bottom {
+            margin-top: 15px;
+            width: 100%;
+            /*height: 480px;*/
+            overflow:auto;
+        }
+
+        .mytable {
+            margin-top: 10px;
+            width: 100%;
+            table-layout: auto;
+            padding: 0;
+            margin: 0;
+        }
+
+        caption {
+            padding: 0 0 5px 0;
+            width: 100%;
+            font: italic 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            text-align: right;
+        }
+
+        th {
+            font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            color: #637a85; /*#4f6b72;*/
+            border-right: 1px solid #C1DAD7;
+            border-bottom: 1px solid #C1DAD7;
+            border-top: 1px solid #C1DAD7;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 6px 6px 6px 12px;
+            background: #CCE8EA; /*#CAE8EA no-repeat;*/
+            font-size: 14px;
+        }
+
+            th.nobg {
+                border-top: 0;
+                border-left: 0;
+                border-right: 1px solid #C1DAD7;
+                background: none;
+            }
+
+        td {
+            border-right: 1px solid #C1DAD7;
+            border-bottom: 1px solid #C1DAD7;
+            background: #fff;
+            font-size: 12px;
+            padding: 6px 6px 6px 12px;
+            color: #4f6b72;
+        }
+
+
+            td.alt {
+                background: #F5FAFA;
+                color: #797268;
+            }
+
+        th.spec {
+            border-left: 1px solid #C1DAD7;
+            border-top: 0;
+            background: #fff no-repeat;
+            font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        }
+
+        th.specalt {
+            border-left: 1px solid #C1DAD7;
+            border-top: 0;
+            background: #f5fafa no-repeat;
+            font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            color: #797268;
+        }
+        </style>
+    <script lang="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $('#select').change(function () {
+                var selectedIndex = $(this).get(0).selectedIndex;
+                if (selectedIndex == 0) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入NTID"); }
+                if (selectedIndex == 1) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入NTID"); }
+                if (selectedIndex == 2) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入电脑名"); }
+                if (selectedIndex == 3) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入完整AD组名"); }
+                if (selectedIndex == 4) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入电脑名(在线)"); }
+                if (selectedIndex == 5) { document.getElementById("searchtxt").value = ""; document.getElementById("searchtxt").setAttribute("placeholder", "请输入电脑名(在线)"); }
+                $('#searchtxt').focus();
+            });
+            $('#searchtxt').on('keypress', function (e) {
+                if (event.keyCode == 13) {
+                    event.cancelBubble = true;
+                    event.returnValue = false;
+                    $(this).parents("div").find("#searchbtn").click();
+                }
+            });
+        });
+    </script>
+</head > 
+    <body > 
+        <form id="form1" class="form">
+            <div id="content_top">
+                <h1 class="title">JABIL黄埔在线查询接口</h1>
+            </div>
+            <hr />
+            <div id="content_center">
+                <select id="select" class="select red mini">
+                    <option value="UserBaseInfoByNTID" selected="selected">用户基础信息查询</option>
+                    <option value="UserAdvanceInfoByNTID">用户高级信息查询</option>
+                    <option value="SMS">SMS Center</option>
+                    <option value="Leader">AD组内成员查询</option>
+                    <option value="SystemGroup">在线主机管理员组查询</option>
+                    <option value="LogonUser">在线主机用户/SN/MAC查询</option>
+                </select>
+                <input id="searchtxt" class="input" name="inputtxt" placeholder="请输入NTID" />
+                <input id="searchbtn" class="btn-gradient red mini" name="submit" type="button" value="查询" />
+                <input id="resetclaer" class="btn-gradient green mini" name="reset" type="button" value="重置" />
+                <input id="export2excel" class="btn-gradient blue mini" name="export" type="button" value="导出EXCEL" onclick="toExcel()" />
+            </div>
+            <div id="content_bottom">
+                <!--<table id="table1" class="mytable">
+                    <tr>
+                        <th>查询参数</th>
+                        <th>NTID</th>
+                        <th>SAP工号</th>
+                        <th>旧工号</th>
+                        <th>Workday工号</th>
+                        <th>中文名</th>
+                        <th>英文名</th>
+                        <th>在职状态</th>
+                        <th>邮箱</th>
+                        <th>部门</th>
+                        <th>成本中心</th>
+                        <th>电话</th>
+                    </tr>
+                </table>-->
+                <div id="prog" hidden="hidden">
+                    <label>正在查询，请稍后:</label>
+                    <progress value="0" max="100" id="pg" data-type="loading">您的浏览器不支持progress元素</progress>
+                </div>
+                <table id="table1" class="mytable">
+
+                </table>
+            </div>
+        </form>
+        <script lang="javascript" type="text/javascript">
+            //重置按钮
+            var reset = document.getElementById("resetclaer");
+            reset.onclick = function () {
+                //移除table下所有子元素
+                var tabl = document.getElementById("table1");
+                var child = tabl.getElementsByTagName("tr");
+                if (child != "" || child != undefined) {
+                    var pObjs = tabl.childNodes;
+                    for (var i = pObjs.length - 1; i >= 0; i--) {
+                        // 一定要倒序，正序是删不干净的，可自行尝试
+                        tabl.removeChild(pObjs[i]);
+                    }
+                    //tabl.parentNode.removeChild(child);
+                    //移除table所有子元素
+                }
+                var divpagl = document.getElementById("prog");
+                divpagl.hidden = true;
+                document.getElementById("select").selectedIndex = 0;
+                document.getElementById("searchtxt").value = "";
+                document.getElementById("searchtxt").focus();
+            }
+
+            //查询按钮
+            var click = document.getElementById("searchbtn");
+            click.onclick = function () {
+                var temp = document.getElementById("searchtxt").value;
+                //var input = temp.replace(/(^\s*)|(\s*$)/g, '');//去除空格;
+                if (temp == "" || temp == undefined || temp == null) {
+                    alert("请输入查询条件！");
+                    $("#searchtxt").focus();
+                    return;
+                }
+                var selectedIndex = document.getElementById("select").selectedIndex;
+                switch (selectedIndex) {
+                    //根据下拉框选择执行对应的接口
+                    case 0:
+                        GetBaseUserInfo(temp);
+                        break;
+                    case 1:
+                        GetAdvanceUserInfo(temp);
+                        break;
+                    case 2:
+                        SMSSearch(temp);
+                        break;
+                    case 3:
+                        GetADGroupMembers(temp);
+                        break;
+                    case 4:
+                        GetAdminGroup(temp);
+                        break;
+                    case 5:
+                        GetLogonUser(temp);
+                        break;
+                    default:
+                        GetBaseUserInfo(temp);
+                        break;
+                }
+                document.getElementById("searchtxt").value = "";
+            }
+
+            //用户基础信息接口
+            function GetBaseUserInfo(temp) {
+                var pgel = document.getElementById("pg");
+                var divpagl = document.getElementById("prog");
+                var tab = document.getElementsByTagName("td");
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/GetADUser",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "NTID": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理
+                        for (a = 0; a <= 100; a++) {
+                            divpagl.hidden = false;
+                            setInterval(function (e) {
+                                if (pgel.value != 100) pgel.value++;
+
+                                //else pgel.value=0;
+                            }, 1000);
+                        }
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        if (typeof (data) !== undefined) {
+                            var tablestr1 = "<tr><th>Parameter</th><th>UserName</th><th>Email</th><th>Title</th><th>Leader</th><th>CostCenter</th><th>Company</th></tr>";
+                            var par = $('#select option:selected').text() + ">>>" + temp;
+                            var tablestr2 = "<tr><td>" + par + "</td><td>" + data.Results["0"]["UserName"] + "</td><td>" + data.Results["0"]["Email"] + "</td><td>" + data.Results["0"]["Title"] + "</td><td>" + data.Results["0"]["Manager"] + "</td><td>" + data.Results["0"]["CostCenter"] + "</td><td>" + data.Results["0"]["Company"] + "</td></tr>";
+                            $("#table1").append(tablestr1 + tablestr2);
+                        }
+                        else {
+                            alert("未查询到数据!");
+                            divpagl.hidden = true;
+                        }
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.setAttribute("value", "0");
+                        divpagl.hidden = true;
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        console.log(e);
+                        alert("查询该用户信息出错，请检查用户名(" + temp + ")是否正确！");
+                        console.clear();
+                        divpagl.hidden = true;
+                        //document.getElementById("multipleResults").innerHTML = e;
+                    }
+                });
+            }
+
+            //用户高级信息接口
+            function GetAdvanceUserInfo(temp) {
+                var pgel = document.getElementById("pg");
+                var divpagl = document.getElementById("prog");
+                var tab = document.getElementsByTagName("td");
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/GetUserInfoByNTID",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "NTID": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理
+                        for (a = 0; a <= 100; a++) {
+                            divpagl.hidden = false;
+                            setInterval(function (e) {
+                                if (pgel.value != 100) pgel.value++;
+
+                                //else pgel.value=0;
+                            }, 1000);
+                        }
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        if (typeof (data) !== undefined || typeof (data) !== null) {
+                            var tablestr1 = "<tr><th>Parameter</th><th>AccountsInfo</th><th>Contact</th><th>Title</th><th>Leader</th><th>CostCenter</th><th>Location</th><th>Groups</th></tr>";
+                            var par = $('#select option:selected').text() + ">>>" + temp;
+                            var leadtemp = data.Results["Manager"].toString();
+                            var leader = leadtemp.substring(0, leadtemp.indexOf(',')).replace("CN=", "");
+                            var grouptemp = data.Results["MemberOf"].toString();
+                            var groups = grouptemp.replace(/\CN=/g, '<br>CN=');
+                            var tablestr2 = "<tr><td>" + par + "</td><td>NTID:" + data.Results["SamAccountName"] + "<br>Created:" + formatyn(data.Results["Created"]) + "<br>SID:" + data.Results["SID"]["Value"] + "<br>SubAccounts:" + data.Results["JabilExt2"] + "<br>FullName:" + data.Results["extensionAttribute14"] + "<br>DisplayName:" + data.Results["DisplayName"] + "<br>Enabled:" + data.Results["Enabled"] + "<br>LockedOut:" + data.Results["LockedOut"] + "<br>lockoutTime:" + data.Results["lockoutTime"]
+                                + "<br>NeverExpires:" + data.Results["PasswordNeverExpires"] + "<br>PasswordLastSet:" + formatyn(data.Results["PasswordLastSet"]) + "<br>LasetLoginDate:" + formatyn(data.Results["LastLogonDate"]) + "<br>LasetBadPassword:" + formatyn(data.Results["LastBadPasswordAttempt"].replace(null,"0")) + "<br>logonCount:" + data.Results["logonCount"]
+                                + "<br>ExpiringTime:" + formatyn(data.Results["msTSExpireDate"]) + "<br>Modified:" + formatyn(data.Results["Modified"]) + "<br>ChangedOn:" + formatyn(data.Results["whenChanged"]) + "</td><td>Email:" + data.Results["EmailAddress"] + "<br>HomePhone:" + data.Results["HomePhone"] + "<br>Mobile:" + data.Results["mobile"] + "/" + data.Results["MobilePhone"]
+                                + "<br>Telephone" + data.Results["telephoneNumber"] + "</td><td>" + data.Results["Title"] + "</td><td>" + leader + "</td><td>" + data.Results["serialNumber"] + "</td><td>" + data.Results["Country"] + " - " + data.Results["City"] + "<br>" + data.Results["JabilExt15"] + "<br>" + data.Results["Division"] + "<br>" + data.Results["JabilExt16"] + "<br>" + data.Results["Company"] + "<br>StreetAddress:" + data.Results["StreetAddress"] + "</td><td>" + groups + "</td></tr>";
+                            $("#table1").append(tablestr1 + tablestr2);
+                        }
+                        else {
+                            alert("未查询到数据!");
+                            divpagl.hidden = true;
+                        }
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.setAttribute("value", "0");
+                        divpagl.hidden = true;
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        console.log(e);
+                        alert("查询该用户信息出错，请检查用户名(" + temp + ")是否正确！");
+                        console.clear();
+                        divpagl.hidden = true;
+                        //document.getElementById("multipleResults").innerHTML = e;
+                    }
+                });
+            }
+
+            //电脑SMS信息
+            function SMSSearch(temp) {
+                var pgel = document.getElementById("pg");
+                var divpagl = document.getElementById("prog");
+                var tab = document.getElementsByTagName("td");
+                //SCCM健康检查接口
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/SCCMCheck",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "HostName": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理
+                        for (a = 0; a <= 100; a++) {
+                            divpagl.hidden = false;
+                            setInterval(function (e) {
+                                if (pgel.value != 100) pgel.value++;
+                                //else pgel.value=0;
+                            }, 1000);
+                        }
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        if (typeof (data) !== undefined || typeof (data) !== null) {
+                            var tablestr1 = "<tr><th>Parameter</th><th>HostName</th><th>IP</th><th>MAC</th><th>LastLogon</th><th>OS</th><th>InstalledOn</th><th>AssignedUser</th><th>Site</th><th>SystGroup</th><th>OU</th><th><span style='color: green;font-weight:bold'>HealthStatus</span></th><th><span style='color: red;font-weight:bold'>RebootPending</span></th></tr>";
+                            var par = $('#select option:selected').text() + ":" + temp.toUpperCase();
+                            var tablestr2 = "<tr><td>" + par + "</td><td>" + data.Results["Name"].toUpperCase() + "</td><td>" + data.Results["IPAddresses"] + "</td><td>" + data.Results["MACAddresses"] + "</td><td>" + data.Results["LastLogonUserName"]
+                                + "</td><td>" + data.Results["OperatingSystemNameandVersion"] + "<br>Ver:" + data.Results["BuildExt"] + "</td><td>" + data.Results["CreationDate"]
+                                + "</td><td>" + data.Results["IsAssignedToUser"] + "</td><td>" + data.Results["ADSiteName"] + "</td><td>" + data.Results["SystemGroupName"] + "</td><td>" + data.Results["DistinguishedName"]
+                                + "</td><td>" + "PFE_LastDate:" + data.Results["PFE_LastDate"] + "<br>CCMVer:" + data.Results["ClientVersion"] + "<br>CCMStatus:" + data.Results["PFE_CCMStatus"]
+                                + "<br>BTTS:" + data.Results["PFE_BITSStatus"] + "<br>DCOM:" + data.Results["PFE_DCOM"] + "<br>DCOMProtocols:" + data.Results["PFE_DCOMProtocols"] + "<br>LanternAppCI:"
+                                + data.Results["PFE_LanternAppCI"] + "<br>PolicyPlatformLA:" + data.Results["PFE_PolicyPlatformLAStatus"] + "<br>PolicyPlatformProcessor:" + data.Results["PFE_PolicyPlatformProcessorStatus"]
+                                + "<br>StaleLogs:" + data.Results["PFE_StaleLogs"] + "<br>WMIReadRepositor:" + data.Results["PFE_WMIReadRepositor"] + "<br>WMIStatus:" + data.Results["PFE_WMIStatus"]
+                                + "<br>WMIWriteRepository:" + data.Results["PFE_WMIWriteRepository"] + "<br>WUAStatus:" + data.Results["PFE_WUAStatus"] + "</td><td>" + data.Results["PFE_RebootPending"] + "</td></tr>";
+                            $("#table1").append(tablestr1 + tablestr2.replace(/,/g, ",<br>").replace(/.000000+/g, ""));
+
+                            //以下两行因为在数据返回后会刷新一次页面，导致后续提交需要重新选择
+                            //document.body.innerHTML = document.body.innerHTML.replace(/Health/ig, "<span style='color: green;font-weight:bold;font-style:italic'>$&</span>");//将指定文字标记为绿色
+                            //document.body.innerHTML = document.body.innerHTML.replace(/REBOOTPENDING/ig, "<span style='color: red;'>$&</span>");//将指定文字标记为绿色
+                        }
+                        else {
+                            alert("未查询到数据!");
+                            divpagl.hidden = true;
+                        }
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.setAttribute("value", "0");
+                        divpagl.hidden = true;
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        console.log(e);
+                        alert("查询该设备信息出错，请检查电脑名(" + temp + ")是否正确！");
+                        console.clear();
+                        divpagl.hidden = true;
+                        //document.getElementById("multipleResults").innerHTML = e;
+                    }
+                });
+
+            }
+
+            //AD组内成员查询
+            function GetADGroupMembers(temp) {
+                var pgel = document.getElementById("pg");
+                var divpagl = document.getElementById("prog");
+                var tab = document.getElementsByTagName("td");
+                //SCCM健康检查接口
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/SearchADGroupByGroupName",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "FullGroupName": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理
+                        for (a = 0; a <= 100; a++) {
+                            divpagl.hidden = false;
+                            setInterval(function (e) {
+                                if (pgel.value != 100) pgel.value++;
+                                //else pgel.value=0;
+                            }, 1000);
+                        }
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        if (typeof (data) !== undefined || typeof (data) !== null) {
+                            var par = $('#select option:selected').text() + ":" + temp.toUpperCase();
+                            var tablestr1 = "<tr><th>Parameters</th><th>Group MemberList</th></tr>";
+                            var tablestr2;
+                            for (o = 0; o < data["Results"].length; o++) {
+                                tablestr2 += "<tr><td>" + o + ":" + par + "</td><td>" + data["Results"][o].Name + "</td></tr>";
+                            }
+                            $("#table1").append(tablestr1 + tablestr2);
+                            alert(data["Results"].length + "条记录返回");
+                            //以下两行因为在数据返回后会刷新一次页面，导致后续提交需要重新选择
+                            //document.body.innerHTML = document.body.innerHTML.replace(/Health/ig, "<span style='color: green;font-weight:bold;font-style:italic'>$&</span>");//将指定文字标记为绿色
+                            //document.body.innerHTML = document.body.innerHTML.replace(/REBOOTPENDING/ig, "<span style='color: red;'>$&</span>");//将指定文字标记为绿色
+                        }
+                        else {
+                            alert("未查询到数据!");
+                            divpagl.hidden = true;
+                        }
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.setAttribute("value", "0");
+                        divpagl.hidden = true;
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        console.log(e);
+                        alert("查询该用户信息出错，请检查组名(" + temp + ")是否正确！");
+                        console.clear();
+                        divpagl.hidden = true;
+                        //document.getElementById("multipleResults").innerHTML = e;
+                    }
+                });
+            }
+
+            //主机管理员组查询
+            function GetAdminGroup(temp) {
+                var pgel = document.getElementById("pg");
+                var divpagl = document.getElementById("prog");
+                var tab = document.getElementsByTagName("td");
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/GetAdminGroupByHostName",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "HostName": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理
+                        for (a = 0; a <= 100; a++) {
+                            divpagl.hidden = false;
+                            setInterval(function (e) {
+                                if (pgel.value != 100) pgel.value++;
+
+                                //else pgel.value=0;
+                            }, 1000);
+                        }
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        if (typeof (data) !== undefined || typeof (data) !== null) {
+                            var tablestr1 = "<tr><th>Parameters</th><th>HostName</th><th>Admin Group Members</th></tr>";
+                            var par = $('#select option:selected').text() + ">>>" + temp;
+                            var tablestr2;
+                            for (o = 0; o < data["Results"].length; o++) {
+                                tablestr2 += "<tr><td>" + o + ":" + par + "</td><td>" + data["Results"][o].PSComputerName + "</td><td>" + data["Results"][o].Name + "</td></tr>";
+                            }
+                            $("#table1").append(tablestr1 + tablestr2);
+                        }
+                        else {
+                            alert("未查询到数据!");
+                            divpagl.hidden = true;
+                        }
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.setAttribute("value", "0");
+                        divpagl.hidden = true;
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        console.log(e);
+                        alert("查询该管理员组信息出错，请检查电脑名(" + temp + ")是否正确！");
+                        console.clear();
+                        divpagl.hidden = true;
+                        //document.getElementById("multipleResults").innerHTML = e;
+                    }
+                });
+            }
+
+            //主机登录用户/SN/MAC
+            function GetLogonUser(temp) {
+                var pgel = document.getElementById("pg");
+                var divpagl = document.getElementById("prog");
+                var tab = document.getElementsByTagName("td");
+                $.ajax({
+                    type: "Get",    //请求方式
+                    async: false,    //是否异步
+                    url: "http://cnhuait60/autotask/ZionAppWebService.asmx/GetLogonUserByHostName",
+                    dataType: "jsonp",    //跨域json请求一定是jsonp
+                    jsonp: "callback",    //跨域请求的参数名，默认是callback
+                    //jsonpCallback:"successCallback",    //自定义跨域参数值，回调函数名也是一样，默认为jQuery自动生成的字符串
+                    data: { "HostName": temp },    //请求参数
+                    beforeSend: function () {
+                        //请求前的处理
+                        for (a = 1; a <= 100; a++) {
+                            divpagl.hidden = false;
+                            setInterval(function (e) {
+                                if (pgel.value != 100) pgel.value++;
+
+                                //else pgel.value=0;
+                            }, 1000);
+                        }
+                    },
+                    success: function (data) {
+                        //请求成功处理，和本地回调完全一样
+                        if (typeof (data) !== undefined) {
+                            //alert("LogonUser  : " + data["Results"]["0"] + "\n" + data["Results"]["1"] + "\nMACInfo:\n" + data["Results"]["2"].MAC + "  " + data["Results"]["2"].Transport);
+                            var tablestr1 = "<tr><th>Parameters</th><th>LogonUser</th><th>SerialNumber</th><th>MAC</th></tr>";
+                            var par = $('#select option:selected').text() + ">>>" + temp;
+                            var tablestr2;
+                            if (data) {
+                                if (data["Results"]["1"].SerialNumber !== undefined) {
+                                    for (var o = 0; o < data["Results"].length; o++) {
+                                        var p = o++;
+                                        if (data["Results"][o++].MAC !== undefined) {
+                                            tablestr2 = "<tr><td>" + o + ":" + par + "</td><td>" + data["Results"]["0"] + "</td><td>" + data["Results"]["1"].SerialNumber + "</td><td>" + data["Results"][2].MAC + "  " + data["Results"][2].Transport + "<br />" + data["Results"][p].MAC + "  " + data["Results"][p].Transport + "</td></tr>";
+                                        }
+                                        else {
+                                            tablestr2 = "<tr><td>" + o + ":" + par + "</td><td>" + data["Results"]["0"] + "</td><td>" + data["Results"]["1"].SerialNumber + "</td><td>" + data["Results"][2].MAC + "  " + data["Results"][2].Transport + "<br />" + "</td></tr>";
+                                        }
+                                    }
+                                }
+                                else if (data["Results"]["0"].SerialNumber !== undefined) {
+                                    //tablestr2 += "<tr><td>" + par + "</td><td>N/A</td><td>" + data["Results"]["0"].SerialNumber + "</td><td>" + data["Results"][1].MAC + "  " + data["Results"][1].Transport + "<br />" + "</td></tr>";
+                                    for (var o = 0; o < data["Results"].length; o++) {
+                                        var p = o++;
+                                        if (data["Results"][p].MAC !== undefined && data["Results"][p].Transport !== undefined) {
+                                            tablestr2 = "<tr><td>" + o + ":" + par + "</td><td>N/A</td><td>" + data["Results"]["0"].SerialNumber + "</td><td>" + data["Results"][1].MAC + "  " + data["Results"][1].Transport + "<br />" + data["Results"][p].MAC + "  " + data["Results"][p].Transport + "</td></tr>";
+                                        }
+                                        else {
+                                            tablestr2 = "<tr><td>" + o + ":" + par + "</td><td>N/A</td><td>" + data["Results"]["0"].SerialNumber + "</td><td>" + data["Results"][1].MAC + "  " + data["Results"][1].Transport + "<br />" +  "</td></tr>";
+                                        }
+                                    }
+                                }
+                            }
+                            $("#table1").append(tablestr1 + tablestr2);
+                        }
+                        else {
+                            alert("未查询到数据!");
+                            divpagl.hidden = true;
+                        }
+                    },
+                    complete: function () {
+                        //请求完成的处理
+                        pgel.setAttribute("value", "0");
+                        divpagl.hidden = true;
+                    },
+                    error: function (e) {
+                        //请求出错处理
+                        alert("未查到主机(" + temp + ")用户/SN/MAC等信息，请检查主机是否在线或者电脑名是否正确！");
+                        //document.getElementById("multipleResults").innerHTML = e;
+                        divpagl.hidden = true;
+                    }
+                });
+            }
+
+            //转化时间戳格式字符串返回yyyy-MM-dd
+            function formatyn(nS) {
+                if (typeof (nS) === 'undefined' || typeof (nS) === 'null') {
+                    return "0";
+                }
+                else {
+                    var a = parseInt(nS.replace("\/Date(", "").replace(")\/", ""));
+                    //var a = parseInt(temptamp); //timestamp： "\/Date(1604156402000)\/"
+                    var datetime = new Date(a);
+                    var year = datetime.getFullYear();
+                    var month = datetime.getMonth() + 1;
+                    var date = datetime.getDate();
+                    return year + "-" + month + "-" + date;
+                }
+            }
+            //超过长度截取...
+            function fontcut(strArray, len){
+                var new_Name = "";
+                if (strArray.length > len) {
+                    new_Name = strArray.substring(0, len);
+                    new_Name += "..."
+                }
+                else {
+                    new_Name = strArray;
+                }
+                return new_Name;
+            }
+
+
+            onload = function () {
+                $("#searchtxt").focus();
+            }
+            </script>
+        
+        <!--JS table导出为EXCEL  https://www.zjhuiwan.cn/info/20200212/4004242219096560.html-->
+        <script type="text/javascript" src="Common/JS2XLSX/xlsx.core.min.js"></script>
+        <script type="text/javascript">
+            //导出excel
+            function toExcel() {
+                var tab = document.getElementById("table1");
+                if (tab.rows.length > 0) {
+                    var blob = sheet2blob(XLSX.utils.table_to_sheet($('table')[0]));
+                    //设置链接
+                    var link = window.URL.createObjectURL(blob);
+                    var a = document.createElement("a");    //创建a标签
+                    var d = new Date();
+                    a.download = "ADTools_Info_" + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + ".xlsx";                //设置被下载的超链接目标（文件名）
+                    a.href = link;                            //设置a标签的链接
+                    document.body.appendChild(a);            //a标签添加到页面
+                    a.click();                                //设置a标签触发单击事件
+                    document.body.removeChild(a);            //移除a标签
+                }
+                else {
+                    alert("表中无数据！");
+                }
+            }
+
+
+            // 将一个sheet转成最终的excel文件的blob对象，然后利用URL.createObjectURL下载
+            function sheet2blob(sheet, sheetName) {
+                sheetName = sheetName || 'sheet1';
+                var workbook = {
+                    SheetNames: [sheetName],
+                    Sheets: {}
+                };
+                workbook.Sheets[sheetName] = sheet;
+                // 生成excel的配置项
+                var wopts = {
+                    bookType: 'xlsx', // 要生成的文件类型
+                    bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+                    type: 'binary'
+                };
+                var wbout = XLSX.write(workbook, wopts);
+                var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
+                // 字符串转ArrayBuffer
+                function s2ab(s) {
+                    var buf = new ArrayBuffer(s.length);
+                    var view = new Uint8Array(buf);
+                    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+                    return buf;
+                }
+                return blob;
+            }
+        </script>
+    </body>
+
+</html>
+        

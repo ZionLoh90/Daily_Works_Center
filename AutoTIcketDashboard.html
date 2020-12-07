@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="./Common/layui/echarts/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="./Common/layui/echarts/echarts.min.js"></script>
+    <style>
+        #Container {
+            width: 50%;
+            height: 400px;
+            /*border:1px solid #ccc;*/
+        }
+    </style>
+</head>
+<body>
+    <div id="Container"></div>
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById("Container"));
+        //显示标题，图例和空的坐标轴--定义空的图表
+        myChart.setOption({
+            backgroundColor: "#192138", //背景颜色
+            textStyle: {
+                color: "#FF6347"  //#02F5F6全局字体颜色，不设置则每个扇形的字和扇形颜色一致
+            },
+            //title: {
+            //    text: "AutoTicketDashboard",
+            //    //color: "#02F5F6",
+            //    subtext: "Order By AssignedTo(Today)",
+            //    x: "center" //设置该标记在x轴位置
+            //},
+            //tooltip: {
+            //    show:true,
+            //    //trigger: "axis",
+            //    //axisPointer: {
+            //    //    type: "shadow"
+            //    //}
+            //},
+            //grid: {
+            //    left: "3%", //表显示的位置
+            //    right: "10%",
+            //    bottom: "3%",
+            //    containLabel: true,
+            //    backgroundColor: "rgba(256,256,256,0.5)"
+            //},
+            ////上方显示标记
+            //legend: {
+            //    data: [],
+            //    x: "right" //设置该标记在x轴位置
+            //},
+            //xAxis: {
+            //    boundaryGap : false,
+            //    data: []
+            //},
+            //yAxis: {                
+            //    //name: "Count",//y轴单位
+            //    type: "value"
+            //},
+            //series: [{
+            //    type: "bar",//设置图形样式 -- 柱状图
+            //    data: [],
+            //    barWidth: 30,//柱图宽度
+            //    barGap: "20%",/*多个并排柱子设置柱子之间的间距*/
+            //    barCategoryGap: "50%",/*多个并排柱子设置柱子之间的间距*/
+            //    label:{show:true},
+            //    //itemStyle: {
+            //    //    normal: { //柱子颜色
+            //    //        color: "green"                        
+            //    //    }
+            //    //},
+            //    itemStyle: {
+            //        normal: {
+            //            barBorderRadius: true,
+            //            color: "#1E9FFF",
+            //        }
+            //    }
+            //}]
+
+            title: {
+                text: "AutoTicketDashboard",
+                textStyle: { color: "#02F5F6" },
+                subtext: "Order By AssignedTo(Today)",
+                x: "center" //设置该标记在x轴位置
+            },
+            tooltip: {
+                show: true,
+                //trigger : "axis"
+            },
+            grid : {
+                x : "10%",
+                y: "15%",
+                x2: "15%",
+                y2:"10%",
+                borderWidth : 1,
+            },
+            legend: {
+                textStyle: { color: "#02F5F6" },
+                data: ["Count"],
+                x:"right"
+            },
+            calculable : true,
+            xAxis : [ {
+                type : "category",
+                data : []
+            } ],
+            yAxis : [ {
+                type : "value"
+            } ],
+            series : [ {
+                name : "Count",
+                type: "bar",
+                itemStyle: {
+                    normal: { //柱子颜色
+                        color: "#cc6633"
+                    },
+                },
+                label:{show:true},
+                barWidth:"40px",
+                data : [],
+            }]
+        });
+        myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+
+        //ajax动态追加数据到 图表
+        var names = [];    //类别数组（实际用来放X轴坐标值）
+        var nums = [];    //销量数组（实际用来放Y坐标值）
+        $.ajax({
+            type: "post",
+            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "http://cnhuait61/AutoTask/zionappwebservice.asmx/AssignedTicketTodayByAssignedTo",    //请求发送到TestServlet处 http://cnhuait61/AutoTask/zionappwebservice.asmx/AssignedTicketTodayByAssignedTo
+            data: {  },
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                console.log(result);
+
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+                if (result) {
+                    for (var i = 0; i < result["Tables"]["0"]["Rows"].length; i++) {
+                        names.push(result["Tables"]["0"]["Rows"][i].AssignedTo);    //挨个取出分配的人员并填入分配数组
+                    }
+                    for (var b = 0; b < result["Tables"]["0"]["Rows"].length; b++) {
+                        nums.push(result["Tables"]["0"]["Rows"][b].Count);    //挨个取出总数并填入总数数组
+                    }
+                    myChart.hideLoading();    //隐藏加载动画
+                    myChart.setOption({        //加载数据图表
+                        xAxis: {
+                            name: "AssignedTo",  //x轴单位
+                            type: "category",
+                            data: names
+                        },
+                        yAxis: {
+                            name: "Count",  //y轴单位
+                        },
+                        series: [{
+                            // 根据名字对应到相应的系列
+                            type:"bar",
+                            name: "Count",
+                            data: nums
+                        }]
+                    });
+                }
+                else {
+                    alert("未查询到数据");
+                    myChart.hideLoading();
+                }
+                console.log(names);
+               //alert(result["Tables"]["0"]["Rows"]["0"].AssignedTo + "\n" + result["Tables"]["0"]["Rows"]["0"]["Count"]);
+            },
+            error: function (errorMsg) {
+                //请求失败时执行该函数
+                alert("图表请求数据失败!");
+                myChart.hideLoading();
+            }
+        })
+
+      
+    </script>
+</body>
+</html>

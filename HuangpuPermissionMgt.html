@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Huangpu权限管理</title>
+    <meta charset="utf-8" />
+    <link href="Common/button.css" rel="stylesheet" />
+    <link href="Common/layui/css/layui.css" rel="stylesheet" />
+    <link href="Common/layui/css/layui.all.js" rel="stylesheet" />
+    <script src="Common/jquery.min.js"></script>
+    <style>
+        .form {
+            width: 96%;
+            height: 100%;
+            margin-left: 2%;
+            margin-right: 2%;
+            margin-top: 10px;
+        }
+
+        .title {
+            text-align: center;
+            font-style: italic;
+        }
+
+        .notice {
+            text-align: center;
+            color: red;
+        }
+
+        .select {
+            /*margin-left:41%;*/
+            font-size: 12pt;
+            text-align: center;
+            width: 180px;
+            height: 30px;
+        }
+
+        .input {
+            font-size: 12pt;
+            width: 200px;
+            height: 30px;
+            text-align: center;
+        }
+
+        #commonbtn{
+            float:right;
+            margin-right:60%;
+        }
+        #btn1{
+            margin-left:10%;
+        }
+        #commonbtn2{
+            margin-left:10%;
+        }
+
+        #content_center {
+            height: 80px;
+            margin-left: 15%;
+            /*margin-right: 20%;*/
+        }
+
+        #content_bottom {
+            margin-top: 120px;
+            width: 100%;
+            /*height: 480px;*/
+            overflow: auto;
+        }
+
+        .mytable {
+            margin-top: 10px;
+            width: 100%;
+            table-layout: auto;
+            padding: 0;
+            margin: 0;
+        }
+
+        caption {
+            padding: 0 0 5px 0;
+            width: 100%;
+            font: italic 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            text-align: right;
+        }
+
+        th {
+            font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            color: #637a85; /*#4f6b72;*/
+            border-right: 1px solid #C1DAD7;
+            border-bottom: 1px solid #C1DAD7;
+            border-top: 1px solid #C1DAD7;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 6px 6px 6px 12px;
+            background: #CCE8EA; /*#CAE8EA no-repeat;*/
+            font-size: 14px;
+        }
+
+            th.nobg {
+                border-top: 0;
+                border-left: 0;
+                border-right: 1px solid #C1DAD7;
+                background: none;
+            }
+
+        td {
+            border-right: 1px solid #C1DAD7;
+            border-bottom: 1px solid #C1DAD7;
+            background: #fff;
+            font-size: 12px;
+            padding: 6px 6px 6px 12px;
+            color: #4f6b72;
+        }
+
+
+            td.alt {
+                background: #F5FAFA;
+                color: #797268;
+            }
+
+        th.spec {
+            border-left: 1px solid #C1DAD7;
+            border-top: 0;
+            background: #fff no-repeat;
+            font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        }
+
+        th.specalt {
+            border-left: 1px solid #C1DAD7;
+            border-top: 0;
+            background: #f5fafa no-repeat;
+            font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+            color: #797268;
+        }
+    </style>
+    <!--<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>-->
+    <script lang="javascript" type="text/javascript" src="Common/PermissionMgt/header.js"></script>
+
+</head>
+<body  oncontextmenu="return(false)">
+    <form id="form1" class="form">
+        <div id="content_center">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                <legend>黄埔权限管理系统</legend>
+                <div id="commonbtn">
+                    <span>页面通用功能按钮:</span>
+                    <input id="resetclaer" class="btn-gradient green mini" name="reset" type="button" value="重置" />
+                    <input id="export2excel" class="btn-gradient blue mini" name="export" type="button" value="导出EXCEL" onclick="toExcel()" />
+                </div>
+            </fieldset>
+            <hr />
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title" id="menuitem">
+                    <li class="layui-this" id="tab1">添加临时管理员(电脑)</li>
+                    <li id="tab2">添加永久管理员(电脑)</li>
+                    <li id="tab3">添加永久管理员(用户)</li>
+                    <li id="tab4">添加用户上网权限(HUA_Web_AL1_RL)</li>
+                    <li id="tab5">删除用户上网权限(HUA_Web_AL1_RL)</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-tab-content layui-show">
+                        <div id="btn1">
+                            <input id="searchtxt0" class="input" name="inputtxt" placeholder="请输入在线电脑名" />
+                            <input id="searchtxt00" class="input" name="inputtxt0" placeholder="请输入NTID" />
+                            <input id="searchbtn0" class="btn-gradient red mini" name="submit" type="button" value="授权" />
+                        </div>
+                    </div>
+                    <div class="layui-tab-item layui-tab-content">
+
+                    </div>
+                    <div class="layui-tab-item layui-tab-content">
+
+                    </div>
+                    <div class="layui-tab-item layui-tab-content">
+                        
+                    </div>
+                    <div class="layui-tab-item layui-tab-content">
+                       
+                    </div>
+                    <div id="btnmod" hidden="hidden">
+                        <div id="commonbtn2">
+                            <input id="searchtxt" class="input" name="inputtxt" placeholder="请输入完整组名" />
+                            <input id="searchbtn" class="btn-gradient red mini" name="submit" type="button" value="授权" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="Common/layui/css/layui.all.js"></script>
+            <script>
+                var src;
+            //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+                layui.use('element', function () {
+                    var element = layui.element;
+                    var $ = layui.jquery;
+                    //非IE,切换tab的监听事件 调用不同的方法
+                    $('.layui-tab-title').on('click', function (title) {
+                        var btnmod = document.getElementById("btnmod");
+                        if (title.toElement.textContent == "添加临时管理员(电脑)") {
+                            btnmod.hidden = true;
+                            searchtxt0.focus();
+                            searchtxt0.placeholder = "请输入在线电脑名";
+                            searchtxt00.placeholder = "请输入NTID";
+                            searchbtn0.value = "授权";
+                        } else if (title.toElement.textContent == "添加永久管理员(电脑)") {
+                            src = document.getElementById("tab2").innerHTML;
+                            btnmod.hidden = false;
+                            searchtxt.focus();
+                            searchtxt.placeholder = "请输入电脑名";
+                            searchbtn.value = "授权";
+                        } else if (title.toElement.textContent == "添加永久管理员(用户)") {
+                            src = document.getElementById("tab3").innerHTML;
+                            btnmod.hidden = false;
+                            searchtxt.focus();
+                            searchtxt.placeholder = "请输入NTID";
+                            searchbtn.value = "授权";
+                        } else if (title.toElement.textContent == "添加用户上网权限(HUA_Web_AL1_RL)") {
+                            src = document.getElementById("tab4").innerHTML;
+                            btnmod.hidden = false;
+                            searchtxt.focus();
+                            searchtxt.placeholder = "请输入NTID";
+                            searchbtn.value = "添加";
+                        } else if (title.toElement.textContent == "删除用户上网权限(HUA_Web_AL1_RL)") {
+                            src = document.getElementById("tab5").innerHTML;
+                            btnmod.hidden = false;
+                            searchtxt.focus();
+                            searchtxt.placeholder = "请输入NTID";
+                            searchbtn.value = "删除";
+                        }
+                    });
+                });
+
+                //查询/授权按钮
+                var click = document.getElementById("searchbtn0");
+                click.onclick = function () {
+                    //var temp = document.getElementById("searchtxt").value;
+                    var temp1 = document.getElementById("searchtxt0").value;
+                    var temp2 = document.getElementById("searchtxt00").value;
+                    //var input = temp.replace(/(^\s*)|(\s*$)/g, '');//去除空格;
+                    if (temp1 == "" || temp1 == undefined) {
+                        alert("请输入条件！");
+                        $("#searchtxt0").focus();
+                        return;
+                    }
+                    if (temp2 == "" || temp2 == undefined) {
+                        alert("请输入条件！");
+                        $("#searchtxt00").focus();
+                        return;
+                    }
+                    if (status == 404) {
+                        alert("接口服务器异常，请联系管理员！");
+                    }
+                    AddTemporaryAdmin(temp1, temp2);
+                    document.getElementById("searchtxt0").value = "";
+                    document.getElementById("searchtxt00").value = "";
+                }
+
+            //查询/授权按钮点击事件
+            var click = document.getElementById("searchbtn");
+            click.onclick = function () {
+                var temp = document.getElementById("searchtxt").value;
+                //var input = temp.replace(/(^\s*)|(\s*$)/g, '');//去除空格;
+                if (temp == "" || temp == undefined || temp == null) {
+                    alert("请输入条件！");
+                    $("#searchtxt").focus();
+                    return;
+                }
+                //var selectedIndex = $('#menuitem').find("li.active a").attr("actived");
+
+                //根据选择执行对应的接口
+                switch(src){
+                    case "添加永久管理员(电脑)":
+                        AddParmenentAdmin(temp);
+                        break;
+                    case "添加永久管理员(用户)":
+                        AddParmenentAdmin_User(temp);
+                        break;
+                    case "添加用户上网权限(HUA_Web_AL1_RL)":
+                        AddNetAcess_User(temp);
+                        break;
+                    case "删除用户上网权限(HUA_Web_AL1_RL)":
+                        RemoveNetAcess_User(temp);
+                        break;
+                }
+                document.getElementById("searchtxt").value = "";
+            }
+
+            </script>
+
+        </div>
+        <div id="content_bottom">
+            <div id="prog" hidden="hidden">
+                <label>正在执行，请稍后:</label>
+                <progress value="0" max="100" id="pg" data-type="loading">您的浏览器不支持progress元素</progress>
+            </div>
+            <table id="table1" class="mytable"></table>
+        </div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top:400px">
+            <legend>环境参数</legend>
+            <div>
+                <span>环境信息：</span><label id="userinfo"></label>
+            </div>
+        </fieldset>
+
+    </form>
+    <script lang="javascript" type="text/javascript">
+        //重置按钮
+        var reset1 = document.getElementById("resetclaer");
+            reset1.onclick = function () {
+                //移除table下所有子元素
+                var tabl = document.getElementById("table1");
+                var child = tabl.getElementsByTagName("tr");
+                if (child != "" || child != undefined) {
+                    var pObjs = tabl.childNodes;
+                    for (var i = pObjs.length - 1; i >= 0; i--) {
+                        // 一定要倒序，正序是删不干净的，可自行尝试
+                        tabl.removeChild(pObjs[i]);
+                    }
+                    //tabl.parentNode.removeChild(child);
+                    //移除table所有子元素
+                }
+                var divpagl = document.getElementById("prog");
+                divpagl.hidden = true;
+                //document.getElementById("select").selectedIndex = 0;
+                document.getElementById("searchtxt0").value = "";
+                document.getElementById("searchtxt00").value = "";
+                document.getElementById("searchtxt").value = "";
+                document.getElementById("searchtxt").focus();
+            }
+        </script>
+
+    <script type="text/javascript" src="Common/PermissionMgt/PermissionMgt.js">      
+        //$(window).load(function(){})在高版本中已经废弃,请用：$(window).on('load',function(){});替代     
+        $(window).on('load', function () {
+            $("#searchtxt0").focus();
+        });
+    </script>
+
+    <!--JS table导出为EXCEL  https://www.zjhuiwan.cn/info/20200212/4004242219096560.html-->
+    <script type="text/javascript" src="Common/JS2XLSX/xlsx.core.min.js"></script>
+    <script type="text/javascript">
+            //导出excel
+            function toExcel() {
+                var tab = document.getElementById("table1");
+                if (tab.rows.length > 0) {
+                    var blob = sheet2blob(XLSX.utils.table_to_sheet($('table')[0]));
+                    //设置链接
+                    var link = window.URL.createObjectURL(blob);
+                    var a = document.createElement("a");    //创建a标签
+                    var d = new Date();
+                    a.download = "HuangpuPermissionMgt_" + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + ".xlsx";                //设置被下载的超链接目标（文件名）
+                    a.href = link;                            //设置a标签的链接
+                    document.body.appendChild(a);            //a标签添加到页面
+                    a.click();                                //设置a标签触发单击事件
+                    document.body.removeChild(a);            //移除a标签
+                }
+                else {
+                    alert("无数据！");
+                }
+            }
+
+
+            // 将一个sheet转成最终的excel文件的blob对象，然后利用URL.createObjectURL下载
+            function sheet2blob(sheet, sheetName) {
+                sheetName = sheetName || 'sheet1';
+                var workbook = {
+                    SheetNames: [sheetName],
+                    Sheets: {}
+                };
+                workbook.Sheets[sheetName] = sheet;
+                // 生成excel的配置项
+                var wopts = {
+                    bookType: 'xlsx', // 要生成的文件类型
+                    bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+                    type: 'binary'
+                };
+                var wbout = XLSX.write(workbook, wopts);
+                var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
+                // 字符串转ArrayBuffer
+                function s2ab(s) {
+                    var buf = new ArrayBuffer(s.length);
+                    var view = new Uint8Array(buf);
+                    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+                    return buf;
+                }
+                return blob;
+            }
+    </script>
+
+
+
+
+</body>
+
+</html>

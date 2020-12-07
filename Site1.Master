@@ -1,0 +1,230 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site1.master.cs" Inherits="ITWorkShopHomePage.Site1" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%--<webopt:bundlereference runat="server" path="~/Content/css" />--%>
+    <link href="~/Common/Images/jabil.ico" rel="shortcut icon" type="image/x-icon" />
+
+    <title>IT WorkShop WorkFlow</title>
+    <%--Page.ResolveClientUrl --%>
+    <link href="Common/main.css" rel="stylesheet" />
+    <link href="Common/Login.css" rel="stylesheet" />
+    <link href="Common/common.css" rel="stylesheet" />
+    <link href="Common/layui/css/layui.css" rel="stylesheet" />
+    <script src="./Common/jquery.min.js"></script>
+
+    <%--时钟--%>
+    <script type="text/javascript">
+        function changeClock() {
+            var d = new Date();
+            document.getElementById("clock").innerHTML = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+        }
+        function hellouser() {
+            // 获取当前时间
+            let timeNow = new Date();
+            // 获取当前小时
+            let hours = timeNow.getHours();
+            // 设置默认文字
+            let text = ``;
+            // 判断当前时间段
+            if (hours > 5 && hours < 10) {
+                text = `早上好:`;
+            } else if (hours >= 10 && hours <= 14) {
+                text = `中午好:`;
+            } else if (hours > 14 && hours <= 18) {
+                text = `下午好:`;
+            } else if (hours > 18 && hours < 24) {
+                text = `晚上好:`;
+            } else if (hours >= 0 && hours <= 5) {
+                text = `凌晨好:`;
+            }
+            document.getElementById("labhello").innerHTML = text;
+           <%-- var txt = "<%= ITWorkShopWorkFlow.BLL.HoursVerify.hourto()%>";
+            document.getElementById("labhello").innerHTML = txt;--%>
+            }
+        window.setInterval(changeClock, 1000);
+        window.setInterval(hellouser, 1500);
+
+    </script>
+</head>
+<body class="smartflow_main">
+    <form runat="server">
+
+        <div class="smartflow_head">
+            <span class="smartflow_title">IT WorkShop Home Page
+                                <a class="navbar-brand" href="Home.aspx" target="_self" style="background-image: url('Common/Images/logo.png');" title="" data-sys-properties="glide.product.image.light" ng-click="setNavigatingState(true)" data-original-title="IT WorkShop Home Page">
+                                    <img id="mainBannerImage16" src="Common/Images/logo.png" style="height: 20px; visibility: hidden;" aria-hidden="true"></a>
+            </span>
+            <div class="smartflow_menu fr">
+                <ul class="smartflow_menu_items clearfix" id="smartflow_menu_items">
+                    <%-- <li class="smartflow_menu_item fr">
+                        <asp:Button runat="server" ID="notic" data-method="notice" class="layui-btn" Text="公告" />
+                    </li>
+                        <li class="smartflow_menu_item fr">
+                        <i class="layui-icon layui-icon-logout" style="cursor: pointer;"><a class="alink" href="javascript:window.opener=null;window.open('','_self');window.close();">退出</a></i>
+                    </li>--%>
+                    <li class="smartflow_menu_item fr">
+                        <i class="layui-icon  layui-icon-dialogue" style="cursor: pointer;"><a href="javascript:window.opener=null;window.open('','_parent');window.close();" target="_parent" class="alink">退出 | </a></i>
+                        <span id="clock"></span>
+                    </li>
+                    <li class="smartflow_menu_item fr">
+                        <asp:Label runat="server" ID="labLogin" CssClass="smartflow_menu_item fr" Text="" />
+                        <asp:Label runat="server" ID="labRole" CssClass="smartflow_menu_item fr" Text="" />
+                        <a href="PersonalInfo.html" class="alink" target="Container">
+                            <asp:Label runat="server" ID="labUID" CssClass="smartflow_menu_item fr" Text="" />
+                        </a>
+                        <asp:Label runat="server" ID="labhello" CssClass="smartflow_menu_item fr" Text="" />
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="smartflow_content">
+            <div class="smartflow_left clearfix" id="menu" runat="server">
+                <div class="menu_item">
+                    <asp:Panel ID="mainten_form" runat="server">
+                        <div class="menu_title" id="mainten">设备维修</div>
+                        <ul class="menu_sub_items hide">
+                            <li class="menu_sub_item">
+                                <span runat="server" id="maintenanceRgeister"><a href="MaintenanceRegister"  onmouseover="window.status='欢迎访问IT WorkShop HomePage...'" target="Container" class="alink" runat="server">维修登记</a></span>
+                            </li>
+                            <asp:Panel ID="mainten_panel" runat="server">
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="maintenanceUpdate">
+                                        <a href="MaintenanceRegister.aspx" target="Container" class="alink">进度更新</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="Span1"><a href="MaintenanceUpdate.aspx" target="Container" class="alink">维修信息维护</a></span>
+                                </li>
+                            </asp:Panel>
+                            <li class="menu_sub_item">
+                                <span runat="server" id="mainRecords"><a href="MaintenanceSearch.aspx" target="Container" class="alink">记录查询</a></span>
+                                <%--?userid=<%= ITWorkShopWorkFlow.BLL.UserSession.userid%>--%>
+                            </li>
+                        </ul>
+                    </asp:Panel>
+                    <asp:Panel ID="vender_form" runat="server">
+                        <div class="menu_title" runat="server" id="vender">供应商电脑入厂</div>
+                        <ul class="menu_sub_items hide" runat="server">
+                            <asp:Panel ID="vender_panel" runat="server">
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="venderRegister"><a href="javascript:;" target="Container" class="alink">入厂登记</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="venderUpdate"><a href="javascript:;" target="Container" class="alink">记录修改</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="venderInfo"><a href="javascript:;" target="Container" class="alink">供应商信息维护</a></span>
+                                </li>
+                            </asp:Panel>
+                            <li class="menu_sub_item">
+                                <span runat="server" id="venderRecords"><a href="javascript:;" target="Container" class="alink">记录查询</a></span>
+                            </li>
+                        </ul>
+                    </asp:Panel>
+
+                    <asp:Panel ID="scrap_form" runat="server">
+                        <div class="menu_title" id="scrap" runat="server">报废流程</div>
+                        <ul class="menu_sub_items hide" runat="server">
+                            <asp:Panel ID="scrap_panel" runat="server">
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="scrapRegister"><a href="javascript:;" target="Container" class="alink">报废登记</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="scrapUpdate"><a href="javascript:;" target="Container" class="alink">进度修改</a></span>
+                                </li>
+                            </asp:Panel>
+                            <li class="menu_sub_item">
+                                <span runat="server" id="scrapRecords"><a href="javascript:;" target="Container" class="alink">记录查询</a></span>
+                            </li>
+                        </ul>
+                    </asp:Panel>
+
+                    <asp:Panel ID="rent_form" runat="server">
+                        <div class="menu_title" id="rent" runat="server">IT物品租借</div>
+                        <ul class="menu_sub_items4 hide" runat="server">
+                            <asp:Panel ID="rent_panel" runat="server">
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="rentRegister"><a href="javascript:;" target="Container" class="alink">租借登记</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server" id="rentUpdate"><a href="javascript:;" target="Container" class="alink">记录修改</a></span>
+                                </li>
+                            </asp:Panel>
+                            <li class="menu_sub_item">
+                                <span runat="server" id="rentRecords"><a href="javascript:;" target="Container" class="alink">记录查询</a></span>
+                            </li>
+                        </ul>
+                    </asp:Panel>
+
+                    <%--<hr />--%>
+                    <asp:Panel ID="gernal_panel" runat="server">
+                        <div class="menu_title">常用功能</div>
+                        <ul class="menu_sub_items4 hide" runat="server" id="general">
+                            <asp:Panel runat="server" ID="IT_Part">
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="http://CNHUAIT60:1234/" target="Container" class="alink">HUA Visitor密码</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="javascript:;" target="Container" class="alink">电脑添加临时管理员</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="http://cnhuam0appprd01/eGate/" target="Container" class="alink">E-Gate</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href=" http://crl.jabil.com/" target="Container" class="alink">JABIL证书服务器</a></span>
+                                </li>
+                            </asp:Panel>
+                            <asp:Panel runat="server" ID="User_Part">
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="http://cnhuam0sfmmts81:8900/IT/Index" target="Container" class="alink">HUA IT Portal</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="http://cnhuam0appprd01/MDLC/Sys/Main#" target="Container" class="alink">资产管理系统</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="http://hutisd0devsql01/scom/default.asp" target="Container" class="alink">查询用户被锁设备</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="http://cnhuait60/unlock" target="Container" class="alink">自助解锁NTID</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="http://cnhuait60/autotask/printerserver" target="Container" class="alink">打印服务器/打印机</a></span>
+                                </li>
+                                <li class="menu_sub_item">
+                                    <span runat="server"><a href="https://hcs-jab-ucmw303/ucmuser/main" target="Container" class="alink">JABIL电话自助</a></span>
+                                </li>
+                            </asp:Panel>
+                        </ul>
+                    </asp:Panel>
+
+                </div>
+
+            </div>
+            <%--<asp:ContentPlaceHolder ID="Right" runat="server">
+        </asp:ContentPlaceHolder>  --%>
+        </div>
+
+
+        <div class="smartflow_right">
+            <iframe style="height: 100%; height: 100%" id="ifrmContent" name="Container" runat="server" border="0" frameborder="0" scrolling="auto">
+                <%--<asp:ContentPlaceHolder ID="content_right" runat="server">
+                </asp:ContentPlaceHolder>--%>
+            </iframe>    
+        </div>
+
+    </form>
+</body>
+<%--等待页面执行完再加载的js--%>
+<script src="Common/common.js"></script>
+<script src="Common/main.js"></script>
+</html>
+

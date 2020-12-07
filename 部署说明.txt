@@ -1,0 +1,5 @@
+﻿为保证获取域用户信息成功
+1.禁用Amonymous Authentication认证
+2.禁用ASP。NET impersonation
+3.启用Windows认证（Windows给HRInfo和其他需要windows验证的页面用）
+4.地址池>高级设置>进程模型>Identity设置为NetworkService
